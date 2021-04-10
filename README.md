@@ -20,10 +20,9 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 - All the code was run on a MacBookPro 2020 running macOS Big Sur Version 11.2.1
 
 ## Code files:
-- 0_clean_covida_cats.R first clean the worker categories to be able to create the occupation wheights. # NOT NECESSARY
-- _COVIDA_SALESFORCE_DATA_TREATMENT Feb 2021_CDR.do first clean of the original data as we receive it from the CoVIDA team # NOT NECESSARY
-- _COVIDA_SALESFORCE_DATA_TREATMENT Feb 2021_CDR.do first clean of the original data as we receive it from the CoVIDA team # NOT NECESSARY
-- 0_clean_sds.do first clean the HSB data as received from HSB.
+
+
+- `0_clean_covida.R` cleans and prepares the covida data set to be used in the paper. Fixes dates and keeps the variables used in the analysis (for internal use, contains confidential data). Creates the database used in the paper `Datos_CoVIDA.dta`
 
 - 1_fig1_CI.R generates figures 1a and 1b
 - 1b_Iceberg_tables.R generates tables from figures 1a and 1b

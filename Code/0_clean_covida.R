@@ -9,19 +9,14 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","haven","lubridate",'openxlsx')
+pkg<-list("here","dplyr","haven","lubridate",'openxlsx',"ids")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
-#setwd("C:/Users/cdelo/Dropbox/Iceberg Paper/")
-
-
-
 
 # load Data ------------------------------------------------------------------
-dta<-read_dta("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_feb19.dta")
+dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_feb19.dta"))
 
 
 #According to my encoding fecharecepci? always comes as  fecharecepci?nmuestralab. Change in CPu if not your case
@@ -53,7 +48,7 @@ dta_covida<- dta %>%
         filter(!(ocup_cat=="militares y fuerza publica" &  test_day==as.Date("2020-07-02")))
         
 
-# We need this for lal the figures and tables....
+# We need this for all the figures and tables....
 dta_covida<- dta_covida %>% 
         mutate(ocup_cat=ifelse(grepl("aseo",ocupacion_desagregada),"personal limpieza",ocup_cat),
                poblacion_desagregada=ifelse(grepl("aseo",ocupacion_desagregada),108800,poblacion_desagregada),
@@ -65,4 +60,8 @@ dta_covida<- dta_covida %>%
         )
 
 
-write_dta(dta_covida, "Data/Datos_Salesforce_treated_feb19_clean.dta")
+#Vars we keep
+dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,date_m,weight_ocup_month,exclude,ocup_cat)
+
+
+write_dta(dta_covida, "Data/Datos_CoVIDA_clean.dta")
