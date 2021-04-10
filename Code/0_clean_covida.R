@@ -18,7 +18,7 @@ rm(pkg)
 # load Data ------------------------------------------------------------------
 dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_feb19.dta"))
 
-
+dta$ocupacion_desagregada
 #According to my encoding fecharecepci? always comes as  fecharecepci?nmuestralab. Change in CPu if not your case
 dta_covida<- dta %>%
         mutate(test_day=as.Date(fechatomamuestra, "%d/%m/%Y"),
@@ -44,7 +44,7 @@ dta_covida<- dta %>%
               ) %>%
         filter(date_m>as.Date("2020-04-01")) %>%  #drops 3 obs in may, we start in june
         filter(!is.na(positive)) %>%  #Missing test result (18453 obs, we end up with)57165 obs
-        filter(exclude==0) %>%  #Exclude those with symtoms and contacts (40292 obs)
+        filter(exclude==0) %>%  #Exclude those with symtoms and contacts 
         filter(!(ocup_cat=="militares y fuerza publica" &  test_day==as.Date("2020-07-02")))
         
 
@@ -64,4 +64,4 @@ dta_covida<- dta_covida %>%
 dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,date_m,weight_ocup_month,exclude,ocup_cat)
 
 
-write_dta(dta_covida, "Data/Datos_CoVIDA_clean.dta")
+write_dta(dta_covida, "Data/Data_CoVIDA.dta")

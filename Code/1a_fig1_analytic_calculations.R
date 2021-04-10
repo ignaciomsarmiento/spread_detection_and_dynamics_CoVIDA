@@ -9,12 +9,9 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom")
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
-
-
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
 
 
 
@@ -44,7 +41,8 @@ casos<- sds_dta %>%
 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta") 
+#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+dta_covida<-read_dta("Data/Data_CoVIDA.dta") 
 
 #dta0<-dta_covida
 #dta_covida<-dta0

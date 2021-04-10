@@ -10,8 +10,8 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 
 ## Data files
 
-- Datos_Salesforce_treated_feb19_clean.dta
-- casos_SDS_poblaciones_23Jan2021.dta
+- `Data/Data_CoVIDA.dta`
+- `Data/sds_dta.dta`
 
 ## Software:
 
@@ -24,7 +24,7 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 
 - `0_clean_covida.R` cleans and prepares the covida data set to be used in the paper. Fixes dates and keeps the variables used in the analysis (for internal use, contains confidential data). Creates the database used in the paper `Datos_CoVIDA.dta`
 
-- 1_fig1_CI.R generates figures 1a and 1b
+- `1a_fig1_analytic_calculations.R` generates the calculations for Figures 1a and 1b, saves it to `temp/Fig1_calculations.RData`
 - 1b_Iceberg_tables.R generates tables from figures 1a and 1b
 - 2_strata_accum_CI_CoVIDA   generates figure 2 Unequal Exposure: by Strata from CoVIDA
 
@@ -36,13 +36,16 @@ Figures and tables are saved in the "views" folder.
  
 ## Data dictionary
 
-- Datos_Salesforce_treated_feb19_clean:
+- `Data_CoVIDA.dta`:
 
-	- positive                                                  =1 if tested positive
-	- test_day                                                  day that the test was administered
+	- `positive`                                                  =1 if tested positive
+	- `test_day`                                                  day that the test was administered
+	- `stratum`													  socioeconomic stratum
+	- `ocup_cat`												  ocupation category
+	- `weight_ocup_month`									      weight: ocupation x month
 	
 
-- casos_SDS_poblaciones_23Jan2021:
+- `sds_dta.dta`:
 
 	- casos                                                                           cases
 	
