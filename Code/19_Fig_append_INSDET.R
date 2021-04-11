@@ -1,3 +1,6 @@
+##########################################################
+# author: CDLR
+##########################################################
 
 
 #Clean the workspace
@@ -7,18 +10,13 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate")
+pkg<-list("dplyr","ggplot2","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-#setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
-setwd("C:/Users/cdelo/Dropbox")
 
-
-
-
-INS<-read.xlsx("C:/Users/cdelo/Dropbox/Iceberg Paper/Data/INS_detected.xlsx")
+INS<-read.xlsx(here("Data/INS_detected.xlsx"))
 
 INS<-INS %>% select(upper, lower, pib, city, fecha, detected, seropositiva_ajustada, lwb, upb)
 
@@ -43,7 +41,7 @@ ggplot(data=INS, aes(x=pib, y=detected, group=city, col=city))+
   geom_text(aes(label=city),hjust=-0.1, vjust=-0.8, size= 4, color="black")+
   geom_text(aes(label=daten),hjust=-0.1, vjust=0.4, size =3, color="#3B4992B2")+
   expand_limits(x = 31000)
-ggsave("C:/Users/cdelo/Dropbox/Apps/Overleaf/COVID_Colombia/figures/INS_detected2.pdf",height=7,width=10)
+ggsave(here("views/INS_detected2.pdf"),height=7,width=10)
 
 INS$serop<-(INS$seropositiva_ajustada)*100
 INS$lb<-(INS$lwb)*100
@@ -68,4 +66,4 @@ ggplot(data=INS, aes(x=pib, y=serop, group=city, col=city))+
   geom_text(aes(label=daten),hjust=-0.1, vjust=0.4, size =3, color="#3B4992B2")+
   expand_limits(x = 31000)
   
-ggsave("C:/Users/cdelo/Dropbox/Apps/Overleaf/COVID_Colombia/figures/INS_seropositive.pdf",height=7,width=10)
+ggsave(here("views/INS_seropositive.pdf"),height=7,width=10)
