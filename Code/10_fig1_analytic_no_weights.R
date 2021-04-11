@@ -9,15 +9,9 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom")
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
-
-
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
-
-
-
 
 # Parameters --------------------------------------------------------------
 set.seed(101010) #seed
@@ -26,7 +20,7 @@ pop_bogota<-8044713
 days_fin<-30*9
 name<-"analytic_crude_no_weights"
 # SDS ---------------------------------------------------------------
-sds_dta<-read_dta("Data/sds_dta.dta")
+sds_dta<-read_dta(here("Data/sds_dta.dta"))
 
 sds_dta<- sds_dta %>%
   filter(!is.na(test_day)) %>% 
@@ -45,10 +39,10 @@ casos<- sds_dta %>%
 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta") 
+#dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 
-#dta0<-dta_covida
-#dta_covida<-dta0
+
 dta_covida<- dta_covida %>% 
   mutate(date_m=as.character(date_m),
          date_m_orig=date_m,
@@ -141,7 +135,7 @@ ggplot(data=covida)+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white"),
         plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(paste0("views/Fig1_1_",name,".pdf"),height=6,width=9)
+ggsave(here(paste0("views/Fig1_1_",name,".pdf")),height=6,width=9)
 
 
 # Accum cases -------------------------------------------------------------
@@ -249,7 +243,7 @@ ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white"),
         plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(paste0("views/Fig1_2_",name,".pdf"),height=6,width=9)
+ggsave(here(paste0("views/Fig1_2_",name,".pdf")),height=6,width=9)
 
 
 
