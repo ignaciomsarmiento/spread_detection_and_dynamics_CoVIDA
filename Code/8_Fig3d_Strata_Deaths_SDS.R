@@ -9,13 +9,10 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate","ggsci")
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate","ggsci","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
-
-#setwd("C:/Users/cdelo/Dropbox/Iceberg Paper/")
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
 
 # Smoothing parameter -----------------------------------------------------
 smoothing<- 0.7
@@ -23,7 +20,7 @@ set.seed(101010)
 # - -----------------------------------------------------------------------
 
 
-sds<-read_dta("Data/sds_dta.dta")
+sds<-read_dta(here("Data/sds_dta.dta"))
 
 
 sds_dta <-  sds %>% 
@@ -45,7 +42,7 @@ sds_dta<- sds_dta %>%
 
 
 
-poblaciones<-read_dta("Data/pob_strat.dta")
+poblaciones<-read_dta(here("Data/pob_strat.dta"))
 
 
 db_sum<-sds_dta %>% 
@@ -112,7 +109,7 @@ ggplot(db_sum_smoothed ) +
          lty=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5))+
   annotate("text",x=as.Date("2020-08-25"), y=1, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
 
-ggsave(paste0("views/Fig_3d_",smoothing,".pdf"),height=6,width=10)
+ggsave(paste0("views/Fig3_d_",smoothing,".pdf"),height=6,width=10)
 
 
 
@@ -145,5 +142,5 @@ ggplot(db_sum_smoothed) +
          lty=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5))+
   annotate("text",x=as.Date("2020-08-25"), y=1, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
 
-ggsave(paste0("views/Fig_3d_",smoothing,"_no_CI.pdf"),height=6,width=10)
+ggsave(paste0("views/Fig3_d_",smoothing,"_no_CI.pdf"),height=6,width=10)
 

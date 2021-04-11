@@ -9,18 +9,14 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom")
+pkg<-list("dplyr","ggplot2","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
-
-
-
 
 # Load data --------------------------------------------------------------
-load("Data/temp/Fig1_calculations.RData")
+load(here("Data/temp/Fig1_calculations.RData"))
 
 
 # Figure 1a ---------------------------------------------------------------
@@ -47,7 +43,7 @@ ggplot(data=covida)+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white"),
         plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(paste0("views/Fig1_1_analytic.pdf"),height=6,width=9)
+ggsave(here(paste0("views/Fig1_1_analytic_march.pdf")),height=6,width=9)
 
 
 # # -----------------------------------------------------------------------
@@ -126,6 +122,6 @@ ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white"),
         plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(paste0("views/Fig1_2_analytic.pdf"),height=6,width=9)
+ggsave(here(paste0("views/Fig1_2_analytic_march.pdf")),height=6,width=9)
 
 

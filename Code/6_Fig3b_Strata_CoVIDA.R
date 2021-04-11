@@ -9,12 +9,12 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr")
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
+
 
 
 # Smoothing parameter -----------------------------------------------------
@@ -23,7 +23,8 @@ set.seed(101010)
 # - -----------------------------------------------------------------------
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta") 
+#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta") 
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 
 table(dta_covida$convenionombredelacuenta,useNA = "always")
 
@@ -62,9 +63,6 @@ db_sum_smoothed<- dta_sum %>%
 
 
 
-
-
-
 # geom_ribbon -------------------------------------------------------------
 
 p<-ggplot(db_sum_smoothed) +
@@ -75,8 +73,8 @@ p<-ggplot(db_sum_smoothed) +
   #ylim(c(-0.015,.2)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
-                            as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 1.5)) +
+                            as.Date("2021-04-01"), "1 month"),
+               expand = c(0.01, 10)) +
   theme_bw() +
   theme(legend.title= element_text(size=14) ,
         legend.position="bottom",
@@ -93,7 +91,7 @@ p<-ggplot(db_sum_smoothed) +
          lty=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5))+
   annotate("text",x=as.Date("2020-08-25"), y=0.07, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
 p
-ggsave(paste0("views/Fig_3b_",smoothing,".pdf"),height=6,width=10)
+ggsave(paste0("views/Fig3_b_",smoothing,".pdf"),height=6,width=10)
 
 
 
@@ -108,8 +106,8 @@ ggplot(db_sum_smoothed) +
   #ylim(c(-0.015,.2)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
-                            as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 1.5)) +
+                            as.Date("2021-04-01"), "1 month"),
+               expand = c(0.01, 10)) +
   theme_bw() +
   theme(legend.title= element_text(size=14) ,
         legend.position="bottom",
@@ -125,6 +123,6 @@ ggplot(db_sum_smoothed) +
   guides(col=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5),
             lty=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5))+
   annotate("text",x=as.Date("2020-08-25"), y=0.07, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
-ggsave(paste0("views/Fig_3b_",smoothing,"_no_CI.pdf"),height=6,width=10)
+ggsave(paste0("views/Fig3_b_",smoothing,"_no_CI.pdf"),height=6,width=10)
 
 

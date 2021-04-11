@@ -9,18 +9,27 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("here","dplyr","haven","lubridate",'openxlsx',"ids")
+pkg<-list("here","dplyr","haven","lubridate")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
 
 # load Data ------------------------------------------------------------------
-dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_feb19.dta"))
+dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_mar31.dta"))
 
-dta$ocupacion_desagregada
-#According to my encoding fecharecepci? always comes as  fecharecepci?nmuestralab. Change in CPu if not your case
+#fix coding of fecha toma muestra,
+
 dta_covida<- dta %>%
+        mutate(fechatomamuestra=ifelse(fechatomamuestra=="2/12/2021","12/02/2021",fechatomamuestra),
+               fechatomamuestra=ifelse(fechatomamuestra=="2/10/2021","10/02/2021",fechatomamuestra),
+               fechatomamuestra=ifelse(fechatomamuestra=="2/06/2021","06/02/2021",fechatomamuestra))
+
+
+
+
+#According to my encoding fecharecepci? always comes as  fecharecepci?nmuestralab. Change in CPu if not your case
+dta_covida<- dta_covida %>%
         mutate(test_day=as.Date(fechatomamuestra, "%d/%m/%Y"),
                #lab_reception=as.Date(fecharecepci?nmuestralab, "%d/%m/%Y"),#, origin="1960-01-01"), #for Camilo PC
                #lab_reception=as.Date(fecharecepciónmuestralab, "%d/%m/%Y"),#, origin="1960-01-01"), #for Camilo PC
@@ -49,7 +58,7 @@ dta_covida<- dta %>%
         
 
 # We need this for all the figures and tables....
-dta_covida<- dta_covida %>% 
+dta_covida<- dta_covida %>%
         mutate(ocup_cat=ifelse(grepl("aseo",ocupacion_desagregada),"personal limpieza",ocup_cat),
                poblacion_desagregada=ifelse(grepl("aseo",ocupacion_desagregada),108800,poblacion_desagregada),
                ocup_cat=ifelse(grepl("gruesa",ocupacionasis),	"obreros de construccion",ocup_cat	),
@@ -59,9 +68,12 @@ dta_covida<- dta_covida %>%
                ocupacion_desagregada=ifelse(ocupacionasis=="constructores de casas",	"obreros de construccion",ocupacion_desagregada	)
         )
 
+#rename locality
+dta_covida<- dta_covida %>%
+        mutate(localidad=localidadderesidencianombredeloc)
 
 #Vars we keep
-dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,date_m,weight_ocup_month,exclude,ocup_cat)
+dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,stratum,date_m,mes,year,localidad,weight_ocup_month,weight_ocup,exclude,ocup_cat)
 
 
-write_dta(dta_covida, "Data/Data_CoVIDA.dta")
+write_dta(dta_covida, here("Data/Data_CoVIDA.dta"))

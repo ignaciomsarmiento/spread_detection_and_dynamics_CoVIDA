@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom","here")
+pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -20,9 +20,9 @@ rm(pkg)
 set.seed(101010) #seed
 pop_bogota<-8044713
 #days_fin<-as.numeric(dmy("03-03-2021")-dmy("01-06-2020"))
-days_fin<-30*9
+days_fin<-30*10 #days times months (june to march (10 months))
 # SDS ---------------------------------------------------------------
-sds_dta<-read_dta("Data/sds_dta.dta")
+sds_dta<-read_dta(here("Data/sds_dta.dta"))
 
 sds_dta<- sds_dta %>%
           filter(!is.na(test_day)) %>% 
@@ -42,16 +42,17 @@ casos<- sds_dta %>%
 
 # covida ------------------------------------------------------------------
 #dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
-dta_covida<-read_dta("Data/Data_CoVIDA.dta") 
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 
-#dta0<-dta_covida
-#dta_covida<-dta0
+
+
+#Fix a couple of wronly coded dates
 dta_covida<- dta_covida %>% 
   mutate(date_m=as.character(date_m),
          date_m_orig=date_m,
          date_m=ifelse(date_m=="2020-04-01","2020-06-01",date_m),
          date_m=ifelse(date_m=="2020-05-01","2020-06-01",date_m),
-         date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
+         #date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
          date_m=ymd(date_m))
 
 rates<-lm(positive~as.factor(date_m)-1,dta_covida,weights = weight_ocup_month)
@@ -147,4 +148,5 @@ accum_covida <- accum_covida %>% mutate(grp=factor(grp,levels=c("Total Cases Est
 
 
   
-save.image("Data/temp/Fig1_calculations.RData")
+save.image(here("Data/temp/Fig1_calculations.RData"))
+

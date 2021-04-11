@@ -9,13 +9,10 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("rgdal","sf","sp","dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate","ggpubr")
+pkg<-list("rgdal","sf","sp","dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate","ggpubr","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
-
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
-#setwd("C:/Users/cdelo/Dropbox/Iceberg Paper/")
 
 
 
@@ -25,70 +22,17 @@ name<-"analytic"
 #days_oct<-as.numeric(dmy("30-11-2020")-dmy("01-06-2020"))
 days_oct<-30*5
 #days_fin<-as.numeric(dmy("03-03-2021")-dmy("01-06-2020"))
-days_fin<-30*9 
-# # SDS ---------------------------------------------------------------
-# sds_dta<-read_dta("Data/sds_dta.dta")
-# 
-# sds_dta<- sds_dta %>%
-#   mutate(mes=month(test_day),
-#          year=year(test_day),
-#          date_m=dmy(paste("01",mes,year,sep="-")),
-#          ocup_cat=ocupacion_agregada,
-#          localidad=str_sub(localidadasis, start=6))
-# 
-# sds_dta$localidad[sds_dta$localidad=="Ciudad Bol?var"]<-"Ciudad Bolivar"
-# sds_dta$localidad[sds_dta$localidad=="Engativ?"]<-"Engativa"
-# sds_dta$localidad[sds_dta$localidad=="Fontib?n"]<-"Fontibon"
-# sds_dta$localidad[sds_dta$localidad=="Los M?rtires"]<-"Martires"
-# sds_dta$localidad[sds_dta$localidad=="San Crist?bal"]<-"San Cristobal"
-# sds_dta$localidad[sds_dta$localidad=="Santafe"]<-"Santa Fe"
-# sds_dta$localidad[sds_dta$localidad=="Usaqu?n"]<-"Usaquen"
-# 
-# 
-# 
-# 
-# sds_dta$pob_loc<-NA
-# sds_dta$pob_loc[sds_dta$localidad=="Antonio Nari?o"]<-108976
-# sds_dta$pob_loc[sds_dta$localidad=="Barrios Unidos"]<-276453
-# sds_dta$pob_loc[sds_dta$localidad=="Bosa"]<-799660
-# sds_dta$pob_loc[sds_dta$localidad=="Chapinero"]<-125294
-# sds_dta$pob_loc[sds_dta$localidad=="Ciudad Bolivar"]<-776351
-# sds_dta$pob_loc[sds_dta$localidad=="Engativa"]<-892169
-# sds_dta$pob_loc[sds_dta$localidad=="Fontibon"]<-444951
-# sds_dta$pob_loc[sds_dta$localidad=="Kennedy"]<-1273390
-# sds_dta$pob_loc[sds_dta$localidad=="La Candelaria"]<-21830
-# sds_dta$pob_loc[sds_dta$localidad=="Martires"]<-92234
-# sds_dta$pob_loc[sds_dta$localidad=="Puente Aranda"]<-211802
-# sds_dta$pob_loc[sds_dta$localidad=="Rafael Uribe Urib"]<-341886
-# sds_dta$pob_loc[sds_dta$localidad=="San Cristobal"]<-387560
-# sds_dta$pob_loc[sds_dta$localidad=="Santa Fe"]<-91111
-# sds_dta$pob_loc[sds_dta$localidad=="Suba"]<-1381597
-# sds_dta$pob_loc[sds_dta$localidad=="Teusaquillo"]<-139369
-# sds_dta$pob_loc[sds_dta$localidad=="Tunjuelito"]<-183067
-# sds_dta$pob_loc[sds_dta$localidad=="Usaquen"]<-476931
-# sds_dta$pob_loc[sds_dta$localidad=="Usme"]<-348332
-# 
-# 
-# casos<- sds_dta %>% 
-#   filter(!is.na(pob_loc)) %>% 
-#   group_by(localidad, date_m) %>% 
-#   dplyr::summarise(casos=sum(casos), .groups="drop") %>%
-#   mutate(casos=ifelse(date_m>=as.Date("2021-02-01"),casos*30/14,casos)) 
-# 
-
+days_fin<-30*10
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 
-dta_covida<- dta_covida %>%
-  mutate(localidad=localidadderesidencianombredeloc)
 
-poblacion<-read_dta("Data/pob_loc.dta") %>% 
+
+poblacion<-read_dta(here("Data/pob_loc.dta")) %>% 
               rename(poblacion_agregada=pob_loc)
 
-
-# dta_covida<- dta_covida %>% 
-#   filter(!is.na(pob_loc)) 
 
 
 
@@ -137,7 +81,7 @@ rates_jan<- rates_jan %>%
 
 
 rs<-bind_rows(rates_oct,rates_jan)
-rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 3th"),ordered = TRUE))
+rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 30th"),ordered = TRUE))
 
 
 rs<- rs %>% mutate(acumm_covid_covida=acumm_covid_covida*100,
@@ -151,7 +95,7 @@ rs<- rs %>% mutate(acumm_covid_covida=acumm_covid_covida*100,
 
 
 
-dta<-read_dta("Data/localidad_formaps.dta")
+dta<-read_dta(here("Data/localidad_formaps.dta"))
 #dta$NOMBRE[dta$NOMBRE=="ANTONIO NARI?O"]<-"ANTONIO NARINO"
 #dta$NOMBRE[dta$NOMBRE=="ANTONIO NARI?'O"]<-"ANTONIO NARINO"
 #dta$NOMBRE[dta$NOMBRE=="LA CANDELARIA"]<-"CANDELARIA"
@@ -173,12 +117,10 @@ ggplot(data=loc_data, aes( y=acumm_covid_covida, group=grp, col=grp, x = reorder
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white")
   ) + scale_color_manual(values=c("#3B4992B2","#EE0000B2"))
-ggsave("views/Fig2_c_localidades_estratord_analytic.pdf",height=7,width=9)
+ggsave(paste0("views/Fig2_c_",name,".pdf"),height=7,width=9)
 
 
 #Maps-------------------------------------------------------------------------------
-
-
 
 #PATHS 
 main = "C:/Users/cdelo/Dropbox/COVIDA"
@@ -287,7 +229,7 @@ p2<-ggplot(sf_poly2) +
   theme(plot.title=element_text(size=10,  colour="black")) +
   #theme(plot.subtitle=element_text(size=7, hjust=0.5, face="italic", color="black")) +
   #theme(plot.caption=element_text(size=7,hjust=0.4, face="italic", color="black", vjust=2)) +
-  labs(title="March 3th")
+  labs(title="March 30th")
 #    caption = "July - January ; CoVIDA Data")
 
 #ggsave("covida_jul_jan.png")

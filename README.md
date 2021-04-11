@@ -10,9 +10,11 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 
 ## Data files
 
-- `Data/Data_CoVIDA.dta`
-- `Data/sds_dta.dta`
-
+- `Data/Data_CoVIDA.dta` CoVIDA Sample
+- `Data/sds_dta.dta`     HBS Sample
+- `Data/pob_cats.dta`    Population by ocupational category
+- `Data/pob_strat.dta`   Population by socioeconomic strata
+- `Data/Region_Mobility_Report_CSVs/2020_CO_Region_Mobility_Report.csv` Data from Google mobility report
 ## Software:
 
 - The analysis is conducted using Stata-16 version 16.1 and R version 4.0.2 (2020-06-22) software
@@ -23,10 +25,27 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 
 
 - `0_clean_covida.R` cleans and prepares the covida data set to be used in the paper. Fixes dates and keeps the variables used in the analysis (for internal use, contains confidential data). Creates the database used in the paper `Datos_CoVIDA.dta`
-
 - `1a_fig1_analytic_calculations.R` generates the calculations for Figures 1a and 1b, saves it to `temp/Fig1_calculations.RData`
-- 1b_Iceberg_tables.R generates tables from figures 1a and 1b
-- 2_strata_accum_CI_CoVIDA   generates figure 2 Unequal Exposure: by Strata from CoVIDA
+- `1b_fig1_analytic_plots.R` plots  Figures 1a and 1b, calls `temp/Fig1_calculations.RData`
+- `2_Fig2a_analytic.R` plots Figure 2a
+- `3_Fig2b_analytic.R` plots Figure 2b
+- `4_Fig2c_analytic.R` plots Figure 2c and maps in Figure SI.9
+- `5_Fig3a_Ocupation_CoVIDA.R` plots Figure 3a and SI.7a
+- `6_Fig3b_Strata_CoVIDA.R` plots Figure 3b and SI.7b
+- `7_Fig3c_Strata_SDS.R` plots Figure 3c and SI.7c
+- `8_Fig3d_Strata_Deaths_SDS.R` plots Figure 3d and SI.7d
+- `9_Table_Positivy.txt` creates contents table Table Positivity rate using different CoVIDA subsamples
+- `10_fig1_analytic_no_weights.R` replicates Figure 1a and 1b excluding occupations weights.
+- `11_fig1_analytic_exclude_public_campaign.R` replicates Figure 1a and 1b excluding participants from the public campaign
+- `12_Table_One_case_detected_of.txt`
+- `13_Table_Epidemiological_week.txt`
+- `14_case_mortality_rate.R`
+- `15_Population_by_Locality.txt`
+- `16_Population_by_Strata.txt`
+- `17_G_mobility.R`
+- `18_daily_dynamics_occupation.R`
+- `19_Fig_append_INSDET.R`
+
 
 
 Figures and tables are saved in the "views" folder. 
@@ -37,13 +56,17 @@ Figures and tables are saved in the "views" folder.
 ## Data dictionary
 
 - `Data_CoVIDA.dta`:
-
+	- `personaid`												  person id
 	- `positive`                                                  =1 if tested positive
 	- `test_day`                                                  day that the test was administered
 	- `stratum`													  socioeconomic stratum
+	- `date_m`													  month-year that the test was administerd
+	- `mes`														  month (numeric) that the test was administerd
+	- `year`													  year (numeric) that the test was administerd
 	- `ocup_cat`												  ocupation category
-	- `weight_ocup_month`									      weight: ocupation x month
-	
+	- `weight_ocup`												  weights: ocupation 
+	- `weight_ocup_month`									      weights: ocupation x month
+	- `localidad`												  locality where the individual resides
 
 - `sds_dta.dta`:
 

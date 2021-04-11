@@ -1,9 +1,8 @@
 #!/bin/bash
 
-R CMD  BATCH 1_fig1_CI &
-R CMD  BATCH 2_Fig2a_occup_desag_COVIDA_V2    &
+R CMD  BATCH --vanilla 0_clean_covida &
+R CMD  BATCH --vanilla 1a_fig1_analytic_calculations    &
+R CMD  BATCH --vanilla 1b_fig1_analytic_plots     &
 
-#R CMD BATCH 7_strata_dynamics_SDS.R &
-#R CMD  BATCH 8_ocupation_dynamics_SDS.R &
 
 #End of Script

@@ -9,12 +9,11 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","haven",'tidyr','rsample',"lubridate","ggsci")
+#Load Packages
+pkg<-list("dplyr","ggplot2","stringr","broom","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
-
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
 
 
 # Parameters --------------------------------------------------------------
@@ -23,19 +22,18 @@ name<-"analytic"
 #days_oct<-as.numeric(dmy("30-11-2020")-dmy("01-06-2020"))
 days_oct<-30*5
 #days_fin<-as.numeric(dmy("03-03-2021")-dmy("01-06-2020"))
-days_fin<-30*9
+days_fin<-30*10
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta") 
+#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 
 
-poblacion<-read_dta("Data/pob_strat.dta")
+
+poblacion<-read_dta(here("Data/pob_strat.dta"))
 poblacion <- poblacion %>% 
             rename(poblacion_agregada=pob_stratum)
 
-
-
-#db<-dta_covida
 
 
 
@@ -85,7 +83,7 @@ rates_jan<- rates_jan %>%
 
 
 rs<-bind_rows(rates_oct,rates_jan)
-rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 3rd"),ordered = TRUE),
+rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 30th"),ordered = TRUE),
                    stratum=factor(stratum,levels=c(1,2,3,4), labels=c("1&2","3","4","5&6"),ordered = TRUE))
 
 

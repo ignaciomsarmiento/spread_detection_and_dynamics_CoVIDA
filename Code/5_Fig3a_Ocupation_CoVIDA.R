@@ -9,12 +9,11 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr")
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
 
 
 # Smoothing parameter -----------------------------------------------------
@@ -66,10 +65,10 @@ transf_ocup_agg<-function(db){
     ))
 }
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
-
 
 dta_covida<-transf_ocup(dta_covida)
 
@@ -78,13 +77,6 @@ dta_covida<-dta_covida %>%
 
 
 dta_covida<-transf_ocup_agg(dta_covida)
-
-table(dta_covida$ocup_cat,dta_covida$ocup_cat_agg)
-# x<-dta_covida %>% 
-#   group_by(ocup_cat_agg, ocup_cat)%>%
-#   tally()
-
-
 
 
 dta_sum<-dta_covida %>% 
@@ -118,11 +110,6 @@ db_sum_smoothed<- dta_sum %>%
 
 
 
-
-
-
-
-
 # geom_ribbon -------------------------------------------------------------
 
 p<-ggplot(db_sum_smoothed) +
@@ -133,8 +120,8 @@ p<-ggplot(db_sum_smoothed) +
   #ylim(c(-0.015,.2)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
-                            as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 1.5)) +
+                            as.Date("2021-04-01"), "1 month"),
+               expand = c(0.01, 10)) +
   theme_bw() +
   theme(legend.title= element_text(size=14) ,
         legend.position="bottom",
@@ -151,7 +138,7 @@ p<-ggplot(db_sum_smoothed) +
          lty=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5))
 p
 p + annotate("text",x=as.Date("2020-08-25"), y=0.16, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
-ggsave(paste0("views/Fig_3a_",smoothing,".pdf"),height=6,width=10)
+ggsave(paste0("views/Fig3_a_",smoothing,".pdf"),height=6,width=10)
 
 
 
@@ -166,8 +153,8 @@ ggplot(db_sum_smoothed) +
   #ylim(c(-0.015,.2)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
-                            as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 1.5)) +
+                            as.Date("2021-04-01"), "1 month"),
+               expand = c(0.01, 10)) +
   theme_bw() +
   theme(legend.title= element_text(size=14) ,
         legend.position="bottom",
@@ -175,7 +162,7 @@ ggplot(db_sum_smoothed) +
         axis.title = element_text(size=14),
         panel.grid.major.x = element_blank(),
         legend.background = element_rect(fill='transparent'),
-        axis.text.x =element_text( angle=0,hjust=1,size=14),
+        axis.text.x =element_text( angle=0,hjust=0.5,size=14),
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white")
   ) +
@@ -183,6 +170,6 @@ ggplot(db_sum_smoothed) +
   guides(col=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5),
          lty=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5))+ 
   annotate("text",x=as.Date("2020-08-25"), y=0.16, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
-ggsave(paste0("views/Fig_3a_",smoothing,"_no_CI.pdf"),height=6,width=10)
+ggsave(paste0("views/Fig3_a_",smoothing,"_no_CI.pdf"),height=6,width=10)
 
 

@@ -9,17 +9,14 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","lubridate",'tidyr','rsample','purrr')
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","lubridate",'tidyr','rsample','here')
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
 
 
-
-
-google<-read.csv("Data/Region_Mobility_Report_CSVs/2020_CO_Region_Mobility_Report.csv")
+google<-read.csv(here("Data/Region_Mobility_Report_CSVs/2020_CO_Region_Mobility_Report.csv"))
 google<- google %>% filter(sub_region_1=="Bogota")
 google<- google %>% mutate(date=ymd(date),
                            month=month(date))

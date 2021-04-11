@@ -9,13 +9,12 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','ggsci',"lubridate","Hmisc","broom")
+pkg<-list("dplyr","ggplot2","stringr","broom","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
-#setwd("C:/Users/cdelo/Dropbox")
+
 
 
 
@@ -25,7 +24,7 @@ name<-"analytic"
 #days_oct<-as.numeric(dmy("30-11-2020")-dmy("01-06-2020"))
 days_oct<-30*5
 #days_fin<-as.numeric(dmy("03-03-2021")-dmy("01-06-2020"))
-days_fin<-30*9
+days_fin<-30*10
 
 #db<-dta_covida
 # Helper Function --------------------------------------------------------------
@@ -60,25 +59,23 @@ transf_ocup<-function(db){
 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
-#dta<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 #dta_covida<-dta
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
 
 
 dta_covida<-transf_ocup(dta_covida)
-table(dta_covida$ocup_cat)
 
-poblacion<- read_dta("Data/pob_cats.dta")
+
+poblacion<- read_dta(here("Data/pob_cats.dta"))
 poblacion<-transf_ocup(poblacion)
 poblacion<- poblacion %>% 
             group_by(ocup_cat) %>% 
             dplyr::summarize(poblacion_agregada=sum(poblacion_agregada),.groups="drop")
 
-#db<-dta_covida
 
 # Calculate rates by ocupation --------------------------------------------
-
 
 #June November
 rates_oct <-broom::tidy(lm(positive~as.factor(ocup_cat)-1,dta_covida %>%   filter(mes>4 & mes<12) ,weights = weight_ocup), conf.int = TRUE)
@@ -123,7 +120,7 @@ rates_jan<- rates_jan %>%
 
 
 rs<-bind_rows(rates_oct,rates_jan)
-rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 3rd"),ordered = TRUE),
+rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 30th"),ordered = TRUE),
                    ocup_cat=factor(ocup_cat))
 rs<- rs %>% mutate(ocup_cat=forcats::fct_reorder2(ocup_cat,grp,-acumm_covid_covida))
 
