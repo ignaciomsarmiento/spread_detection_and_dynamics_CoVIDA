@@ -15,6 +15,8 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 - `Data/pob_cats.dta`    Population by ocupational category
 - `Data/pob_strat.dta`   Population by socioeconomic strata
 - `Data/Region_Mobility_Report_CSVs/2020_CO_Region_Mobility_Report.csv` Data from Google mobility report
+- `Data/translate.xlsx`  contains ocupational categories translated to english
+
 ## Software:
 
 - The analysis is conducted using Stata-16 version 16.1 and R version 4.0.2 (2020-06-22) software

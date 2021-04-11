@@ -1,1 +1,0 @@
-Code to create Table SI.3. Epidemiological week when occupation were able to resume work for the first time since the beginning of the pandemic (in week 12)
