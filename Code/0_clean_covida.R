@@ -17,7 +17,7 @@ rm(pkg)
 
 # load Data ------------------------------------------------------------------
 dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_mar31.dta"))
-
+dta$ocpacio
 #fix coding of fecha toma muestra,
 
 dta_covida<- dta %>%

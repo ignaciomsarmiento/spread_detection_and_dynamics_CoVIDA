@@ -2,6 +2,8 @@
 
 Data and replication files for "SARS-CoV-2 spread, detection, and dynamics in a megacity in Latin America" by  Rachid Laajaj, Camilo de los Rios, [Ignacio Sarmiento-Barbieri](https://ignaciomsarmiento.github.io), Danilo Aristizabal, Eduardo Behrentz, Raquel Bernal, Giancarlo Buitrago, Zulma Cucunubá, Fernando de la Hoz, Gabriela Delgado, Alejandro Gaviria, Luis Jorge Hernández, Leonardo León, Elkin Osorio, Andrea Ramírez Varela, Silvia Restrepo, Rodrigo Rodríguez, Martha Vives, Duncan Webb
 
+The working paper can be found [here](https://repositorio.uniandes.edu.co/handle/1992/49763)
+
 # Abstract
 
 In many developing countries, the COVID-19 pandemic has spread much faster and wider than the number of detected cases implies. By combining data from 59,770 RT-PCR tests on mostly asymptomatic individuals with administrative data on all detected cases, we capture the spread and dynamics of the COVID-19 pandemic in Bogotá from June 2020 to early March 2021. Our data provide unusually broad and detailed information on mostly asymptomatic adults in Bogotá, allowing to describe various features of the pandemic that appear to be specific to a developing country context. We find that, by the end of March 2021, slightly more than half of the population in Bogotá has been infected, despite only a small fraction of this population being detected. In July 2020, after four months of generalized quarantine that mitigated the pandemic without curving it, the initial buildup of immunity contributed to the end of the first wave. We also show that the share of the population infected by February 2021 varies widely by occupation, socio-economic stratum, and location. This, in turn, has affected the dynamics of the spread: while the first wave of infections was driven by the lowest economic strata and highly-exposed occupations, the second peak affected the population more evenly. A better understanding of the spread and dynamics of the pandemic across different groups provides valuable guidance for efficient targeting of health policy measures and restrictions. 
@@ -40,17 +42,20 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 	- `10_fig1_analytic_no_weights.R` replicates Figure 1a and 1b excluding occupations weights.
 	- `11_fig1_analytic_exclude_public_campaign.R` replicates Figure 1a and 1b excluding participants from the public campaign
 	- `12_Table_One_case_detected_of.txt`
-	- `13_Table_Epidemiological_week.txt`
+	- `13_Table_Epidemiological_week.R` creates Table SI.3. 
 	- `14_case_mortality_rate.R`
-	- `15_Population_by_Locality.txt`
-	- `16_Population_by_Strata.txt`
-	- `17_G_mobility.R`
-	- `18_daily_dynamics_occupation.R`
-	- `19_Fig_append_INSDET.R`
+	- `15_Population_by_Locality.txt` creates  Table SI.5
+	- `16_Population_by_Strata.do` creates  Table SI.6
+	- `17_G_mobility.R` plots Figure SI.6
+	- `18_daily_dynamics_occupation.R` plots Figure SI.8.
+	- `19_Fig_append_INSDET.R` plots Figure SI.10. a and b
 
 
+## Figures and Tables
 
-Figures and tables are saved in the "views" folder. 
+- Figures are saved in the `views` folder. 
+- Tables are saved in the `Results_tables` folder
+
 
 
 
