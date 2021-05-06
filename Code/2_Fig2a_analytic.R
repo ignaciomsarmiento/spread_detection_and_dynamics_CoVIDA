@@ -16,8 +16,6 @@ rm(pkg)
 
 
 
-
-
 # Parameters --------------------------------------------------------------
 set.seed(101010) #seed
 name<-"analytic"
@@ -59,8 +57,8 @@ transf_ocup<-function(db){
 
 
 # covida ------------------------------------------------------------------
-#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
-dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
+dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
+#dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
 #dta_covida<-dta
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
 
@@ -120,7 +118,7 @@ rates_jan<- rates_jan %>%
 
 
 rs<-bind_rows(rates_oct,rates_jan)
-rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 30th"),ordered = TRUE),
+rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 3rd"),ordered = TRUE),
                    ocup_cat=factor(ocup_cat))
 rs<- rs %>% mutate(ocup_cat=forcats::fct_reorder2(ocup_cat,grp,-acumm_covid_covida))
 
@@ -134,7 +132,7 @@ rs<- rs %>% mutate(acumm_covid_covida=acumm_covid_covida*100,
 
 
 ggplot(data=rs, aes(x=ocup_cat, y=acumm_covid_covida, group=grp, col=grp))+
-  geom_point(size=1, position=position_dodge(width = .2))+
+  geom_point(size=2,shape=grp, position=position_dodge(width = .2))+
   geom_errorbar(aes(ymin=q025, ymax=q975), width=.1, position=position_dodge(width = .2)) +
   xlab("Occupations") +
   theme_bw() +
@@ -149,7 +147,7 @@ ggplot(data=rs, aes(x=ocup_cat, y=acumm_covid_covida, group=grp, col=grp))+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white")
   ) + scale_color_manual(values=c("#3B4992B2","#EE0000B2"))
-ggsave(paste0("views/Fig2_a_",name,".pdf"),height=7,width=9)
+ggsave(paste0("views/Fig2a_",name,".pdf"),height=7,width=9)
 
 
 

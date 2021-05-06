@@ -123,9 +123,11 @@ ggsave(paste0("views/Fig2_c_",name,".pdf"),height=7,width=9)
 #Maps-------------------------------------------------------------------------------
 
 #PATHS 
-main = "C:/Users/cdelo/Dropbox/COVIDA"
+#setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
+#setwd("C:/Users/cdelo/Dropbox/Iceberg Paper/")
+main = "C:/Users/cdelo/Dropbox/Iceberg Paper/Data"
 localidades = paste(main,"/localidades", sep="") 
-iceberg = paste(main, "/iceberg", sep="") 
+#iceberg = paste(main, "/iceberg", sep="") 
 loc_fig = ("C:/Users/cdelo/Dropbox/Iceberg Paper/views/Loclaidades_Maps")
 
 # I like this projection better

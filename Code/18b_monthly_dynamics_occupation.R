@@ -18,7 +18,7 @@ rm(pkg)
 
 
 # Smoothing parameter -----------------------------------------------------
-smoothing<- 0.7
+smoothing<- "raw"
 set.seed(101010)
 # - -----------------------------------------------------------------------
 
@@ -75,72 +75,94 @@ dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","pers
 dta_covida<-transf_ocup(dta_covida)
 
 
+#Fix a couple of wronly coded dates
+dta_covida<- dta_covida %>% 
+  mutate(date_m=as.character(date_m),
+         date_m_orig=date_m,
+         date_m=ifelse(date_m=="2020-04-01","2020-06-01",date_m),
+         date_m=ifelse(date_m=="2020-05-01","2020-06-01",date_m),
+         date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
+         date_m=ymd(date_m))
 
 
 
-dta_sum<-dta_covida %>% 
-  group_by(test_day, ocup_cat)%>%
-  filter(date_m>as.Date("2020-05-01")) %>% 
-  summarise(rate_pos=weighted.mean(positive,weight_ocup,na.rm = TRUE),
-            n=n(),.groups="drop") %>% 
-  filter(!is.na(ocup_cat))
+reg<-lm(positive~as.factor(ocup_cat):as.factor(date_m)-1,dta_covida ,weights = weight_ocup)
+rates <-broom::tidy(reg, conf.int = TRUE)
 
 
-dta_sum<- dta_sum %>% mutate(test_day=lubridate::ymd(test_day))
+rates <-rates %>%   mutate(term=str_remove_all(term,"as.factor\\(ocup_cat\\)"),
+                           term=str_remove_all(term,"as.factor\\(date_m\\)"))  %>% 
+                    separate(col=term,into=c("ocup_cat","date_m"),sep=":") %>% 
+    mutate(rate_pos=estimate*100,
+         q025=conf.low*100,
+         q975=conf.high*100)  %>%
+  select(ocup_cat,date_m,rate_pos,q025,q975)
 
 
-#completes missing days
-dta_sum<- dta_sum %>% complete(ocup_cat,nesting(test_day))
+obs<-  dta_covida %>% 
+  group_by(ocup_cat,date_m) %>% 
+  dplyr::summarise(mean=mean(positive),
+                   Obs=formatC(n(), format="f", big.mark=",", digits=0),
+                   .groups="drop")
 
-#db<-dta_sum
-smoother<-function(db){
-  db[,"rate_pos"]<-zoo::na.fill(db[,"rate_pos"],"extend")
-  x<-predict(loess(rate_pos ~ as.numeric(test_day) , data = db, span=smoothing),se=TRUE)
-  tibble(rate_pos=x$fit,rate_pos_se=x$se.fit)
+
+
+rates<- rates %>% 
+  mutate(date_m=ymd(date_m)) %>% 
+  left_join(.,obs) %>% 
+  mutate(rate_pos=ifelse(is.na(rate_pos),0,rate_pos))
+
+
+write.xlsx(rates,here("Results_tables/Dynamic_Ocup_Raw.xlsx"))
+
+
+#
+rates<- rates %>% mutate(q025=ifelse(q025<0,0,q025),
+                 q025=ifelse(rate_pos==0,NA,q025),
+                 q975=ifelse(q975>100,100,q975),
+                 q975=ifelse(rate_pos==0,NA,q975),
+                 Obs=ifelse(is.na(Obs),0,Obs))
+
+
+#plot_db<-rates
+
+#plot_db<- rates %>% filter(ocup_cat=="Health Care and Social Assistance")
+
+plot_list<-list()
+
+for(i in 1:length(table(rates$ocup_cat))){
+  plot_db<- rates %>% filter(ocup_cat==names(table(rates$ocup_cat)[i]))
+  plot_label_N<- paste0("N = ",format(plot_db$Obs,big.mark=","))
+
+  plot_list[[i]]<-ggplot(plot_db, aes(x=date_m, y=rate_pos))+
+                    geom_point(size=1)+
+                    geom_errorbar(aes(ymin=q025, ymax=q975), width=.1) +
+                    scale_x_date("", date_labels = "%b %Y",
+                                 breaks = seq(as.Date("2020-06-01"),
+                                              as.Date("2021-03-01"), "1 month"),
+                                 expand = c(0.01, 3)) +
+                    #ylab() +
+                    scale_y_continuous("Positivity (%)",limits=c(0,30)) +
+                    annotate("text", x = plot_db$date_m, y = 28, 
+                             label = as.character(paste0(plot_label_N)),  
+                             size= 5, angle=0) +
+                    theme_bw()  +
+                    theme(legend.title= element_blank() ,
+                          legend.position="bottom",
+                          legend.text=element_text(size=14),
+                          axis.title = element_text(size=14),
+                          panel.grid.major.x = element_blank(),
+                          legend.background = element_rect(fill='transparent'),
+                          axis.text.x =element_text( angle=0,hjust=0.5,size=14),
+                          axis.text.y =element_text( size=12),
+                          rect = element_rect(colour = "transparent", fill = "white"),
+                          plot.margin = unit(c(1,1,1,1), "cm")) 
+  #facet_wrap(. ~ ocup_cat, ncol = 3)
+  plot_list[[i]]
+  ggsave(here(paste0("views/Fig_Occupations_",names(table(rates$ocup_cat)[i]),".pdf")),height=20,width=18)
 }
 
-
-db_sum_smoothed<- dta_sum %>% 
-  group_by(ocup_cat) %>% 
-  arrange(test_day) %>% 
-  do(rate_pos = smoother(.)) %>% 
-  unnest(rate_pos) %>% 
-  mutate(test_day=dta_sum$test_day)
-
-
-
-
-
-
-
-
-# geom_ribbon -------------------------------------------------------------
-
-p<-ggplot(db_sum_smoothed) +
-  geom_line(aes(x=test_day, y=rate_pos,group=ocup_cat),size=.7) +
-  geom_ribbon(aes(x=test_day,ymin = rate_pos - qnorm(0.975)*rate_pos_se,  ymax = rate_pos + qnorm(0.975)*rate_pos_se,group=ocup_cat), alpha=0.2) +
-  geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  ylab('Positivity Rate') +
-  #ylim(c(-0.015,.2)) +
-  scale_x_date("", date_labels = "%b %Y",
-               breaks = seq(as.Date("2020-03-01"),
-                            as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 0.01)) +
-  theme_bw() +
-  theme(legend.position="bottom",
-        legend.direction="horizontal",
-        panel.grid.major.x = element_blank(),
-        legend.background = element_rect(fill='transparent'),
-        rect = element_rect(colour = "transparent", fill = "white"),
-        axis.text.x =element_text( angle=60,hjust=1),
-        strip.text = element_text(size=14)) +
-  guides(col=guide_legend(title='',nrow = 2),
-         lty=guide_legend(title='',nrow = 2)
-  )  + scale_color_aaas()
-p + facet_wrap(. ~ ocup_cat, ncol = 3)
-
-#p + annotate("text",x=as.Date("2020-09-06"), y=0.18, label="Selective isolation", colour="black", angle=0,size=3) 
-ggsave(here(paste0("views/Fig_Occupations_",smoothing,"2.pdf")),height=20,width=18)
-
-
+# require(ggpubr)
+# egg::ggarrange(plots=plot_list)
+# ggsave(here(paste0("views/Fig_Occupations_","egg",".pdf")),height=20,width=18)  
 

@@ -7,7 +7,8 @@ lapply(z, library, character.only = TRUE)
 
 
 #PATHS 
-main = "C:/Users/cdelo/Dropbox/COVIDA"
+#main = "C:/Users/cdelo/Dropbox/COVIDA"
+main = "C:/Users/cdelo/Dropbox/Iceberg Paper/Data"
 localidades = paste(main,"/localidades", sep="") 
 iceberg = paste(main, "/iceberg", sep="") 
 loc_fig = ("C:/Users/cdelo/Dropbox/Iceberg Paper/views/Loclaidades_Maps")
@@ -33,7 +34,7 @@ localidades$NOMBRE[localidades$NOMBRE=="LOS MARTIRES"]<-"MARTIRES"
 
 # load the data. I created the vars in stata (its easier as I had the code ready)
 
-setwd(iceberg)
+#setwd(iceberg)
 
 dta<-read_dta("localidad_formaps.dta")
 dta$NOMBRE[dta$NOMBRE=="ANTONIO NARIñO"]<-"ANTONIO NARINO"

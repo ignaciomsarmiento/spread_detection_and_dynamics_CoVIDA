@@ -9,24 +9,28 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("xtable","dplyr","ggplot2","stringr","openxlsx","haven","tidyr","lubridate","here")
+pkg<-list("writexl","xtable","dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
+setwd("C:/Users/cdelo/Dropbox/Iceberg Paper/")
+#setwd("~/Dropbox/Research/Covid_los_andes/Iceberg Paper/")
 
-
+# Smoothing parameter -----------------------------------------------------
+smoothing<- 0.6
+set.seed(101010)
+# - -----------------------------------------------------------------------
 
 #Read SDS----------------------------
-sds<-read_dta(here("Data/sds_dta.dta"))
-
-
+sds<-read_dta("Data/sds_dta.dta")
+sds$death<-NA
+sds$death[sds$recuperado == "Fallecido"]<-1
 
 sds_dta <- sds %>% 
-  mutate(death=ifelse(recuperado=="Fallecido",1,
-                      ifelse(recuperado=="Recuperado",0,NA))) %>% 
+  dplyr::select(fechademuerte, death ) %>% 
  filter(!is.na(death)) %>% 
-  mutate(test_day=dmy(fechatomademuestra),
+  mutate(test_day=dmy(fechademuerte),
          mes=month(test_day),
          year=year(test_day),
          df_month=dmy(paste("01",mes,year,sep="-"))
@@ -36,6 +40,8 @@ sds_dta <- sds %>%
   dplyr::select(deaths, df_month)
   
   
+
+sds<-read_dta("Data/sds_dta.dta")
 
 sds_casos<- sds %>%
   filter(!is.na(test_day)) %>% 
@@ -52,7 +58,7 @@ sds_casos<- sds %>%
 
 #Read CoVida----------------------------
 
-dta<-readRDS(here("Data/covida_dta.Rds"))
+dta<-readRDS("Data/covida_dta.Rds")
 dta_covida<- dta %>%
   mutate(df_month=floor_date(as_date(test_day), "month"),
   )

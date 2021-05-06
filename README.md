@@ -28,6 +28,15 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 ## Code files:
 
 - `_Main.sh` Contains the sequence of execution of scripts to reproduce the figures and tables in the paper and appendix. It also creates a folder (logs) to house  log files: 
+
+	- `0_clean_covida_cats.R` clean the workers categories. This is only for internal use.
+	- `0_clean_sds`. cleans HSB data. Only for internal use.
+	- `COVIDA_SALESFORCE_DATA_TREATMENT mar 2021` creates the covida data set to be used with workers weights. Only for internal use.
+
+	- `0_pobsamples` creates Tables SI.5 and SI.6. (Mean stratum is missing and comes form other code, adding it here)
+	- `0_quick_descriptives_ig.R` creates table SI.1
+	- `20_Iceberg_tables_ig3.R` creates table SI.2
+	
 	- `0_clean_covida.R` cleans and prepares the covida data set to be used in the paper. Fixes dates and keeps the variables used in the analysis (for internal use, contains confidential data). Creates the database used in the paper `Datos_CoVIDA.dta`
 	- `1a_fig1_analytic_calculations.R` generates the calculations for Figures 1a and 1b, saves it to `temp/Fig1_calculations.RData`
 	- `1b_fig1_analytic_plots.R` plots  Figures 1a and 1b, calls `temp/Fig1_calculations.RData`
@@ -74,6 +83,7 @@ In many developing countries, the COVID-19 pandemic has spread much faster and w
 	- `weight_ocup`												  weights: ocupation 
 	- `weight_ocup_month`									      weights: ocupation x month
 	- `localidad`												  locality where the individual resides
+	- `sample`													  denotes the sources of the participating companies
 
 - `sds_dta.dta`:
 

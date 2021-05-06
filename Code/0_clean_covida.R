@@ -13,13 +13,10 @@ pkg<-list("here","dplyr","haven","lubridate")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
-
-
 # load Data ------------------------------------------------------------------
-dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_mar31.dta"))
-dta$ocpacio
-#fix coding of fecha toma muestra,
+dta<-read_dta(here("../covid-project/data/UNIANDES/processed/Datos_Salesforce_treated_feb19.dta"))
 
+#fix coding of fecha toma muestra,
 dta_covida<- dta %>%
         mutate(fechatomamuestra=ifelse(fechatomamuestra=="2/12/2021","12/02/2021",fechatomamuestra),
                fechatomamuestra=ifelse(fechatomamuestra=="2/10/2021","10/02/2021",fechatomamuestra),
@@ -68,12 +65,24 @@ dta_covida<- dta_covida %>%
                ocupacion_desagregada=ifelse(ocupacionasis=="constructores de casas",	"obreros de construccion",ocupacion_desagregada	)
         )
 
+
+#Fix a couple of wronly coded dates
+dta_covida<- dta_covida %>% 
+        mutate(date_m=as.character(date_m),
+               date_m_orig=date_m,
+               date_m=ifelse(date_m=="2020-04-01","2020-06-01",date_m),
+               date_m=ifelse(date_m=="2020-05-01","2020-06-01",date_m),
+               #date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
+               date_m=ymd(date_m))
+
 #rename locality
 dta_covida<- dta_covida %>%
-        mutate(localidad=localidadderesidencianombredeloc)
+        mutate(localidad=localidadderesidencianombredeloc,
+               sample=convenionombredelacuenta,
+               gender=género)
 
 #Vars we keep
-dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,stratum,date_m,mes,year,localidad,weight_ocup_month,weight_ocup,exclude,ocup_cat)
+dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,stratum,date_m,mes,year,gender,age_group,localidad,weight_ocup_month,weight_ocup,exclude,ocup_cat,sample)
 
 
 write_dta(dta_covida, here("Data/Data_CoVIDA.dta"))
