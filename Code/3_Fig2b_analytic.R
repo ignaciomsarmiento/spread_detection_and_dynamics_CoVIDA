@@ -16,24 +16,26 @@ rm(pkg)
 
 
 
+
 # Parameters --------------------------------------------------------------
 set.seed(101010)
 name<-"analytic"
 #days_oct<-as.numeric(dmy("30-11-2020")-dmy("01-06-2020"))
 days_oct<-30*5
 #days_fin<-as.numeric(dmy("03-03-2021")-dmy("01-06-2020"))
-days_fin<-30*10
+days_fin<-30*9
 
 # covida ------------------------------------------------------------------
-#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
-dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
-
+dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
 
 
 poblacion<-read_dta(here("Data/pob_strat.dta"))
 poblacion <- poblacion %>% 
-            rename(poblacion_agregada=pob_stratum)
+  rename(poblacion_agregada=pob_stratum)
 
+
+
+#db<-dta_covida
 
 
 
@@ -83,7 +85,7 @@ rates_jan<- rates_jan %>%
 
 
 rs<-bind_rows(rates_oct,rates_jan)
-rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 30th"),ordered = TRUE),
+rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 3rd"),ordered = TRUE),
                    stratum=factor(stratum,levels=c(1,2,3,4), labels=c("1&2","3","4","5&6"),ordered = TRUE))
 
 
@@ -98,19 +100,19 @@ rs<- rs %>% mutate(acumm_covid_covida=acumm_covid_covida*100,
 
 
 ggplot(data=rs, aes(x=stratum, y=acumm_covid_covida, group=grp, col=grp))+
-  geom_point(size=1, position=position_dodge(width = .2))+
-  geom_errorbar(aes(ymin=q025, ymax=q975), width=.1, position=position_dodge(width = .2)) +
+  geom_point(aes(shape=grp),size=2, position=position_dodge(width = .4))+
+  geom_errorbar(aes(ymin=q025, ymax=q975,lty=grp), width=.2, position=position_dodge(width = .4)) +
   xlab("Socioeconomic Strata") +
   theme_bw() +
   scale_y_continuous("Accumulated SARS-COV-2 Cases \n as Percentage of Population",breaks =seq(0,100,20),limits=c(0,102)) +
   theme(legend.title= element_blank() ,
         legend.position="bottom",
-        legend.text=element_text(size=14),
-        axis.title = element_text(size=14),
+        legend.text=element_text(size=12),
+        axis.title = element_text(size=12),
         panel.grid.major.x = element_blank(),
         legend.background = element_rect(fill='transparent'),
-        axis.text.x =element_text( angle=0,hjust=0.5,size=14),
+        axis.text.x =element_text( angle=0,hjust=1,size=12),
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white")
-  ) + scale_color_manual(values=c("#3B4992B2","#EE0000B2"))
-ggsave(paste0("views/Fig2_b_",name,".pdf"),height=5,width=7)
+  ) + scale_color_manual(values=c("#d8b365","#5ab4ac"))
+ggsave(here(paste0("views/Fig2b_",name,".pdf")),height=5,width=7)

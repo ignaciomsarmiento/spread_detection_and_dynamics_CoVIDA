@@ -135,15 +135,15 @@ for(i in 1:length(table(rates$ocup_cat))){
   plot_label_N<- paste0("N = ",format(plot_db$Obs,big.mark=","))
 
   plot_list[[i]]<-ggplot(plot_db, aes(x=date_m, y=rate_pos))+
-                    geom_point(size=1)+
-                    geom_errorbar(aes(ymin=q025, ymax=q975), width=.1) +
+                    geom_point(size=2)+
+                    geom_errorbar(aes(ymin=q025, ymax=q975), width=.2, position=position_dodge(width = .4)) +
                     scale_x_date("", date_labels = "%b %Y",
                                  breaks = seq(as.Date("2020-06-01"),
                                               as.Date("2021-03-01"), "1 month"),
                                  expand = c(0.01, 3)) +
                     #ylab() +
-                    scale_y_continuous("Positivity (%)",limits=c(0,30)) +
-                    annotate("text", x = plot_db$date_m, y = 28, 
+                    scale_y_continuous("Positivity (%)",limits=c(0,20)) +
+                    annotate("text", x = plot_db$date_m, y = 18, 
                              label = as.character(paste0(plot_label_N)),  
                              size= 5, angle=0) +
                     theme_bw()  +
@@ -159,10 +159,39 @@ for(i in 1:length(table(rates$ocup_cat))){
                           plot.margin = unit(c(1,1,1,1), "cm")) 
   #facet_wrap(. ~ ocup_cat, ncol = 3)
   plot_list[[i]]
-  ggsave(here(paste0("views/Fig_Occupations_",names(table(rates$ocup_cat)[i]),".pdf")),height=20,width=18)
+  ggsave(here(paste0("views/Fig_Occupations_",names(table(rates$ocup_cat)[i]),".pdf")),height=5,width=7)
 }
 
 # require(ggpubr)
 # egg::ggarrange(plots=plot_list)
 # ggsave(here(paste0("views/Fig_Occupations_","egg",".pdf")),height=20,width=18)  
 
+rates<- rates %>% 
+      mutate(q975=ifelse(q975>22,22,q975))
+
+ggplot(rates, aes(x=date_m, y=rate_pos, label=Obs))+
+  geom_point(size=2)+
+  geom_line() +
+  geom_errorbar(aes(ymin=q025, ymax=q975), width=.2, alpha=0.6, position=position_dodge(width = .4)) +
+  scale_x_date("", date_labels = "%b %Y",
+               breaks = seq(as.Date("2020-06-01"),
+                            as.Date("2021-03-01"), "1 month"),
+               expand = c(0.05, 3)) +
+  #ylab() +
+  scale_y_continuous("Positivity (%)",limits=c(0,22)) +
+  geom_text(aes(label = Obs, y=21, x=date_m),
+            size = 4, 
+            nudge_x = 0.9,
+            check_overlap = T) +
+  annotate("text", label = "Obs:", size = 4, x = ymd("2020-05-20"), y = 21) +
+  theme_bw()  +
+  theme(legend.position="bottom",
+        legend.direction="horizontal",
+        panel.grid.major.x = element_blank(),
+        legend.background = element_rect(fill='transparent'),
+        rect = element_rect(colour = "transparent", fill = "white"),
+        axis.text.x =element_text(size=12, angle=60,hjust=1),
+        axis.text.y =element_text( size=12),
+        strip.text = element_text(size=14)) +
+  facet_wrap(. ~ ocup_cat, ncol = 3)
+ggsave(here(paste0("views/Fig_Occupations.pdf")),height=20,width=18)

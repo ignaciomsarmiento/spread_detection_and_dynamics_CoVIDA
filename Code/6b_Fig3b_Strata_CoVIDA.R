@@ -9,10 +9,9 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr","here")
+pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr","here","lubridate")
 lapply(pkg, require, character.only=T)
 rm(pkg)
-
 
 
 # Read data covida ------------------------------------------------------------------
@@ -79,7 +78,6 @@ p<-ggplot(rates) +
   geom_point(aes(x=date_m, y=rate_pos,shape=stratum,col=stratum),size=2, position=position_dodge(width =4),alpha=0.6) +
   geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
   #ylim(c(-0.015,.2)) +
-  scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5),limits=c(0,14)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
                             as.Date("2021-04-01"), "1 month"),
@@ -100,10 +98,11 @@ p<-ggplot(rates) +
          shape=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5),
          col=guide_legend(title='Socioeconomic Strata',nrow = 1,title.position = "top",title.hjust =0.5))+
   annotate("text",x=as.Date("2020-08-25"), y=12, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.04)
-p
+p +scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5),limits=c(0,14))
 ggsave(here(paste0("views/Fig3b.pdf")),height=6,width=10)
 
 
 # With Conf Intervals -------------------------------------------------------
-p+geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=stratum), width=.1, position=position_dodge(width = 4)) 
+p+geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=stratum), width=.1, position=position_dodge(width = 4))  + 
+  scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5,15,17.5),limits=c(0,20)) 
 ggsave(here(paste0("views/Fig3b_CI.pdf")),height=6,width=10)

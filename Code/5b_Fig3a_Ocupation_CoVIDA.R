@@ -130,7 +130,6 @@ p<-ggplot(rates) +
   geom_point(aes(x=date_m, y=rate_pos,shape=ocup_cat_agg,col=ocup_cat_agg),size=2, position=position_dodge(width =4),alpha=0.6) +
   #geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=ocup_cat_agg), width=.1, position=position_dodge(width = 4),alpha=0.6) +
   geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5),limits=c(0,14)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
                             as.Date("2021-04-01"), "1 month"),
@@ -152,12 +151,13 @@ p<-ggplot(rates) +
          shape=guide_legend(title='Occupations',nrow = 2,title.position = "top",title.hjust =0.5),
          lty=guide_legend(title='Occupations',nrow = 2,title.position = "top",title.hjust =0.5)) + 
   annotate("text",x=as.Date("2020-08-25"), y=12, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.04)
-p
+p + scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5),limits=c(0,14)) 
 ggsave(here(paste0("views/Fig3a.pdf")),height=6.5,width=10)
 
 
 
 
 # With Conf Intervals -------------------------------------------------------
-p+geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=ocup_cat_agg), width=.1, position=position_dodge(width = 4),alpha=0.6) +
+p+ geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=ocup_cat_agg), width=.1, position=position_dodge(width = 4),alpha=0.6) +
+   scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5,15,17.5),limits=c(0,20)) 
 ggsave(here(paste0("views/Fig3a_CI.pdf")),height=6,width=10)
