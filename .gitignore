@@ -1,12 +1,12 @@
 
 # Created by https://www.gitignore.io/api/r,macos
-##Folders to ignore
+##Folders to ignore and internal files
 /Data/
 /Feedback Iceberg Paper/
 /Figuras_PPT/
 /Icon/
 /Our paper in PDF/
-/Papers/
+/Papers/ 
 /Results_tables/
 /Submission/
 /file_structure.txt/
@@ -26,7 +26,7 @@ notes.txt
 /views/0_clean_sds.do
 /view/_COVIDA_SALESFORCE_DATA_TREATMENT Feb 2021_CDR.do
 
-.gitignore
+
 
 ### macOS ###
 # General
