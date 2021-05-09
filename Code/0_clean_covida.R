@@ -23,8 +23,6 @@ dta_covida<- dta %>%
                fechatomamuestra=ifelse(fechatomamuestra=="2/06/2021","06/02/2021",fechatomamuestra))
 
 
-
-
 #According to my encoding fecharecepci? always comes as  fecharecepci?nmuestralab. Change in CPu if not your case
 dta_covida<- dta_covida %>%
         mutate(test_day=as.Date(fechatomamuestra, "%d/%m/%Y"),
@@ -35,7 +33,7 @@ dta_covida<- dta_covida %>%
                test_day= ifelse(is.na(test_day), lab_reception,test_day), #fix test_day with fecharecepciónmuestralab
                test_day= ifelse(is.na(test_day), fechahoradeaperturaalone1,test_day), #fix test_day with fecharecepciónmuestralab
                test_day= as_date(test_day),
-               exclude=ifelse( symptom==1 | contact_COVID==1 | contact==1,1,0),
+               exclude_symptomatic=ifelse( symptom==1 | contact_COVID==1 | contact==1,0,1),
                mes=month(test_day),
                year=year(test_day),
                semana=week(test_day),
@@ -44,13 +42,13 @@ dta_covida<- dta_covida %>%
                                    stratum %in% c(5, 6) ~ 4),
                #date_m=dmy(paste("01",mes,year,sep="-")),
                date_m=floor_date(test_day, "month"),
-               semana=ifelse(semana==53,52,semana),
-               date_week=paste(year,semana,"1",sep="-"),
-               date_week=as.Date(date_week, "%Y-%U-%u")
+               #semana=ifelse(semana==53,52,semana),
+               #date_week=paste(year,semana,"1",sep="-"),
+               #date_week=as.Date(date_week, "%Y-%U-%u")
               ) %>%
-        filter(date_m>as.Date("2020-04-01")) %>%  #drops 3 obs in may, we start in june
+        #filter(date_m>as.Date("2020-04-01")) %>%  #drops 19 obs in may, we start in june
         filter(!is.na(positive)) %>%  #Missing test result (18453 obs, we end up with)57165 obs
-        filter(exclude==0) %>%  #Exclude those with symtoms and contacts 
+        #filter(exclude==0) %>%  #Exclude those with symptom and contacts 
         filter(!(ocup_cat=="militares y fuerza publica" &  test_day==as.Date("2020-07-02")))
         
 
@@ -72,17 +70,30 @@ dta_covida<- dta_covida %>%
                date_m_orig=date_m,
                date_m=ifelse(date_m=="2020-04-01","2020-06-01",date_m),
                date_m=ifelse(date_m=="2020-05-01","2020-06-01",date_m),
-               #date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
+               date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
                date_m=ymd(date_m))
 
 #rename locality
 dta_covida<- dta_covida %>%
         mutate(localidad=localidadderesidencianombredeloc,
-               sample=convenionombredelacuenta,
+               invite_sample=convenionombredelacuenta,
                gender=género)
 
 #Vars we keep
-dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,stratum,date_m,mes,year,gender,age_group,localidad,weight_ocup_month,weight_ocup,exclude,ocup_cat,sample)
+dta_covida<- dta_covida %>% dplyr::select(personaid,positive,test_day,stratum,date_m,mes,year,gender,age_group,localidad,weight_ocup_month,weight_ocup,exclude_symptomatic,ocup_cat,invite_sample)
 
 
 write_dta(dta_covida, here("Data/Data_CoVIDA.dta"))
+
+
+obs0<- dta_covida %>% 
+        group_by(date_m) %>% 
+        tally()
+
+obs1<- dta_covida %>% 
+        filter(exclude_symptomatic==1)
+        
+obs1<- dta_covida %>% 
+        group_by(date_m,exclude_symptomatic) %>% 
+        tally()
+

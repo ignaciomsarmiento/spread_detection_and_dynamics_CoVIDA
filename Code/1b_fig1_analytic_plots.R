@@ -43,13 +43,13 @@ ggplot(data=covida)+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white"),
         plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(here(paste0("views/Fig1_1_analytic_march.pdf")),height=6,width=9)
+ggsave(here("views/Fig1_1_analytic.pdf"),height=6,width=9)
 
 
 # # -----------------------------------------------------------------------
 # Cumulative cases  -------------------------------------------------------------
 # # ----------------------------------------------------------------------
-  
+
 
 # Labels ------------------------------------------------------------------
 ins<-tibble(date_m=rep(as.Date("2020-10-15"),3),ins_point=c(0.3*100, NA ,0.04583383*100),ins_q025=c(.27*100,NA,NA),ins_q975=c(.33*100,NA,NA),grp=c("ins","covida","sds"))
@@ -85,9 +85,9 @@ lab_sds_end
 
 
 accum_covida<- accum_covida %>% 
-              mutate(accum_covida=accum_covida*100,
-                     q975=q975*100,
-                     q025=q025*100)
+  mutate(accum_covida=accum_covida*100,
+         q975=q975*100,
+         q025=q025*100)
 
 
 # Figure 1b ---------------------------------------------------------------
@@ -99,8 +99,8 @@ ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
   #geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
   #annotate("text",x=as.Date("2020-09-15"), y=0.6, label="End of quarantine", colour="black", angle=0,size=3) +
   ylab("Accumulated  SARS-CoV-2 Cases \n as % of Population") +
-   scale_color_manual(values=c("#008B45B2" ,"#631879B2" )) +
-   scale_linetype_manual(values=c("solid","dashed")) +
+  scale_color_manual(values=c("#008B45B2" ,"#631879B2" )) +
+  scale_linetype_manual(values=c("solid","dashed")) +
   scale_fill_manual(values=c("black","#008B45B2" ,"#631879B2")) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-06-01"),
@@ -122,6 +122,5 @@ ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white"),
         plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(here(paste0("views/Fig1_2_analytic_march.pdf")),height=6,width=9)
-
+ggsave(here("views/Fig1_2_analytic.pdf"),height=6,width=9)
 
