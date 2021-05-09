@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","broom","here")
+pkg<-list("dplyr","ggplot2","stringr","broom","here","haven")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -57,9 +57,8 @@ transf_ocup<-function(db){
 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
-#dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
-#dta_covida<-dta
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
+
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
 
 

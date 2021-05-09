@@ -13,21 +13,11 @@ pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr", "ggplot2
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
-here()
 
 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
-
-#Fix a couple of wronly coded dates
-dta_covida<- dta_covida %>% 
-  mutate(date_m=as.character(date_m),
-         date_m_orig=date_m,
-         date_m=ifelse(date_m=="2020-04-01","2020-06-01",date_m),
-         date_m=ifelse(date_m=="2020-05-01","2020-06-01",date_m),
-         date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
-         date_m=ymd(date_m))
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 
 

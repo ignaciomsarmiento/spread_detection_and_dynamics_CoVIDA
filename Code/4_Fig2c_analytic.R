@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("rgdal","sf","sp","dplyr","ggplot2","stringr","openxlsx","haven",'tidyr','rsample','purrr',"lubridate","ggpubr","here")
+pkg<-list("dplyr","ggplot2","stringr","broom","here","haven")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -25,7 +25,7 @@ days_oct<-30*5
 days_fin<-30*9 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 dta_covida<- dta_covida %>%
   mutate(localidad=localidadderesidencianombredeloc)
@@ -99,9 +99,6 @@ rs<- rs %>% mutate(acumm_covid_covida=acumm_covid_covida*100,
 
 
 dta<-read_dta(here("Data/localidad_formaps.dta"))
-#dta$NOMBRE[dta$NOMBRE=="ANTONIO NARI?O"]<-"ANTONIO NARINO"
-#dta$NOMBRE[dta$NOMBRE=="ANTONIO NARI?'O"]<-"ANTONIO NARINO"
-#dta$NOMBRE[dta$NOMBRE=="LA CANDELARIA"]<-"CANDELARIA"
 loc_data<-merge(rs,dta, by = "localidad")
 
 ggplot(data=loc_data, aes( y=acumm_covid_covida, group=grp, col=grp, x = reorder(localidad, estrato_prom)))+

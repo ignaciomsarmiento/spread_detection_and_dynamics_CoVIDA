@@ -39,17 +39,9 @@ casos<- sds_dta %>%
 
 
 # covida ------------------------------------------------------------------
-#dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
-dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 
-dta_covida<- dta_covida %>% 
-  mutate(date_m=as.character(date_m),
-         date_m_orig=date_m,
-         date_m=ifelse(date_m=="2020-04-01","2020-06-01",date_m),
-         date_m=ifelse(date_m=="2020-05-01","2020-06-01",date_m),
-         date_m=ifelse(date_m=="2021-03-01","2021-02-01",date_m),
-         date_m=ymd(date_m))
 
 rates<-lm(positive~as.factor(date_m)-1,dta_covida)
 rates<-broom::tidy(rates, conf.int = TRUE)
@@ -60,7 +52,6 @@ rates<- rates %>% mutate(term=str_remove_all(term,"as.factor(date_m)")) %>%
          q975=conf.high)  %>% 
   mutate(date_m=ymd(date_m)) %>% 
   select(date_m,rate_pos,q025,q975)
-
 
 rates<- rates %>% full_join(.,casos) %>% 
   mutate(month_days=30)#monthDays(date_m))
@@ -95,11 +86,9 @@ rates <- rates %>%
 
 
 gg_covida<- rates %>% 
-  #filter(date_m>as.Date("2020-07-01")) %>% 
   select(date_m,covida_100,q025_covida_100,q975_covida_100) %>% 
   mutate(grp="Total Cases Estimated")
 gg_sds <- rates %>% 
-  #filter(date_m>as.Date("2020-07-01")) %>% 
   select(date_m,sds_100)  %>% 
   rename(covida_100=sds_100) %>% 
   mutate(grp="Detected Cases",
@@ -112,35 +101,10 @@ gg_sds <- rates %>%
 covida<-bind_rows(gg_covida,gg_sds) %>% filter(date_m>=as.Date("2020-06-01"))
 covida <- covida %>% mutate(grp=factor(grp,levels=c("Total Cases Estimated","Detected Cases"), ordered=TRUE))
 
-ggplot(data=covida)+
-  geom_line(aes(x=date_m, y=covida_100,lty=grp,col=grp),size=1) +
-  geom_ribbon(aes(x=date_m,ymin = q025_covida_100,  ymax = q975_covida_100,group=grp), alpha=0.2) +
-  scale_color_manual(values=c("#008B45B2" ,"#631879B2" )) +
-  scale_linetype_manual(values=c("solid","dashed")) +
-  ylab("Daily  SARS-CoV-2 Cases \n per 100,000 Inhabitants") +
-  geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  annotate("text",x=as.Date("2020-08-25"), y=350, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) +
-  scale_x_date("", date_labels = "%b %Y",
-               breaks = seq(as.Date("2020-06-01"),
-                            as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 3)) +
-  theme_bw() +
-  theme(legend.title= element_blank() ,
-        legend.position="bottom",
-        legend.text=element_text(size=14),
-        axis.title = element_text(size=14),
-        panel.grid.major.x = element_blank(),
-        legend.background = element_rect(fill='transparent'),
-        axis.text.x =element_text( angle=0,hjust=0.5,size=14),
-        axis.text.y =element_text( size=12),
-        rect = element_rect(colour = "transparent", fill = "white"),
-        plot.margin = unit(c(1,1,1,1), "cm"))
-ggsave(here(paste0("views/Fig1_1_",name,".pdf")),height=6,width=9)
 
-
-# Accum cases -------------------------------------------------------------
-
-
+# # -----------------------------------------------------------------------
+# Cumulative cases -------------------------------------------------------------
+# # -----------------------------------------------------------------------
 
 accum_gg_covida<- rates %>% 
   select(date_m,perc_covida,q025_perc_covida,q975_perc_covida) %>% 
@@ -173,10 +137,41 @@ accum_covida <- accum_covida %>% mutate(grp=factor(grp,levels=c("Total Cases Est
 
 
 
+# Figure 1a ---------------------------------------------------------------
+ggplot(data=covida)+
+  geom_line(aes(x=date_m, y=covida_100,lty=grp,col=grp),size=1) +
+  geom_ribbon(aes(x=date_m,ymin = q025_covida_100,  ymax = q975_covida_100,group=grp), alpha=0.2) +
+  scale_color_manual(values=c("#008B45B2" ,"#631879B2" )) +
+  scale_linetype_manual(values=c("solid","dashed")) +
+  ylab("Daily  SARS-CoV-2 Cases \n per 100,000 Inhabitants") +
+  geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
+  annotate("text",x=as.Date("2020-08-25"), y=350, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) +
+  scale_x_date("", date_labels = "%b %Y",
+               breaks = seq(as.Date("2020-06-01"),
+                            as.Date("2021-03-01"), "1 month"),
+               expand = c(0.01, 3)) +
+  theme_bw() +
+  theme(legend.title= element_blank() ,
+        legend.position="bottom",
+        legend.text=element_text(size=14),
+        axis.title = element_text(size=14),
+        panel.grid.major.x = element_blank(),
+        legend.background = element_rect(fill='transparent'),
+        axis.text.x =element_text( angle=0,hjust=0.5,size=14),
+        axis.text.y =element_text( size=12),
+        rect = element_rect(colour = "transparent", fill = "white"),
+        plot.margin = unit(c(1,1,1,1), "cm"))
+ggsave(here(paste0("views/Fig1_1_",name,".pdf")),height=6,width=9)
+
+
+# # -----------------------------------------------------------------------
+# Cumulative cases  -------------------------------------------------------------
+# # ----------------------------------------------------------------------
+
+
+# Labels ------------------------------------------------------------------
 ins<-tibble(date_m=rep(as.Date("2020-10-15"),3),ins_point=c(0.3*100, NA ,0.04583383*100),ins_q025=c(.27*100,NA,NA),ins_q975=c(.33*100,NA,NA),grp=c("ins","covida","sds"))
 
-
-#labels
 lab_ins<- paste("NIH seroprevalence survey: ", ins$ins_point[1], " (",ins$ins_q025[1],"-",ins$ins_q975[1],")",sep="")
 lab_ins
 #extrapolate rate for Nov 15 covida
@@ -212,6 +207,8 @@ accum_covida<- accum_covida %>%
          q975=q975*100,
          q025=q025*100)
 
+
+# Figure 1b ---------------------------------------------------------------
 ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
   geom_line(aes(x=date_m, y=accum_covida,lty=grp,col=grp),size=1) +
   geom_ribbon(aes(x=date_m,ymin = q025,  ymax = q975,group=grp), alpha=0.2) +
@@ -228,8 +225,8 @@ ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
                             as.Date("2021-03-01"), "1 month"),
                expand = c(0.01, 3)) +
   annotate("text", x = as.Date("2020-10-15"), y = 0.30*100, label = lab_ins, size=3, hjust=-0.03)+ #lab INS
-  annotate("text", x = as.Date("2020-10-15"), y = 0.36*100, label = lab_covida_nov,size=3)+ #Lab Covida Nov
-  annotate("text", x = as.Date("2021-01-15"), y = 0.58*100, label = lab_covida_end,size=3)+ #Lab Covida End
+  annotate("text", x = as.Date("2020-10-15"), y = 0.38*100, label = lab_covida_nov,size=3)+ #Lab Covida Nov
+  annotate("text", x = as.Date("2021-01-15"), y = 0.60*100, label = lab_covida_end,size=3)+ #Lab Covida End
   annotate("text", x = as.Date("2020-10-15"), y = 0.06*100, label = lab_sds_nov,size=3)+ #Lab SDS Nov
   annotate("text", x = as.Date("2021-01-22"), y = 0.11*100, label = lab_sds_end,size=3)+ #Lab SDS End
   theme_bw() +

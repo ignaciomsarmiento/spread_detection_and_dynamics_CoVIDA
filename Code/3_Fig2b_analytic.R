@@ -10,7 +10,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 #Load Packages
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","broom","here")
+pkg<-list("dplyr","ggplot2","stringr","broom","here","haven")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -26,7 +26,7 @@ days_oct<-30*5
 days_fin<-30*9
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 
 poblacion<-read_dta(here("Data/pob_strat.dta"))

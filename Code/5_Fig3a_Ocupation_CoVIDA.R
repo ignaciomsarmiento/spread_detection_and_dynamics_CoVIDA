@@ -14,12 +14,7 @@ lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
-
-
-# Smoothing parameter -----------------------------------------------------
-smoothing<- 0.7
-set.seed(101010)
-# - -----------------------------------------------------------------------
+# Helper Function -----------------------------------------------------
 
 transf_ocup<-function(db){
   db <- db %>%
@@ -60,13 +55,13 @@ transf_ocup_agg<-function(db){
       ocup_cat_agg %in% c("Delivery Workers","Retail Trade, Accommodation, and Food Services","Janitors and Cleaners")~"Retail Trade,Food Services, \n Accommodation, Delivery, and Cleaners ",
       ocup_cat_agg %in% c("Finance, Management, and Insurance")~"Finance, Management, and Insurance",
       #ocup_cat_agg %in% c("Health Care and Social Assistance") ~ "Health Care and Social Assistance",
-      ocup_cat_agg %in% c("taxistas","personal transporte","personal de servicio a bordo","Taxi Drivers and Transportation")~"Taxi Drivers and Transportation",
+      ocup_cat_agg %in% c("taxistas","personal transporte","personal de servicio a bordo","Taxi Drivers and Transportation")~"Taxi Drivers \n and Transportation",
       TRUE                                                          ~ NA_character_
     ))
 }
-# covida ------------------------------------------------------------------
-#dta_covida<-read_dta("Data/Datos_Salesforce_treated_feb19_clean.dta")
-dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
+
+# Read data covida ------------------------------------------------------------------
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
 
@@ -80,44 +75,51 @@ dta_covida<-transf_ocup_agg(dta_covida)
 
 
 dta_sum<-dta_covida %>% 
-  group_by(test_day, ocup_cat_agg)%>%
-  filter(date_m>as.Date("2020-05-01")) %>% 
-  summarise(rate_pos=weighted.mean(positive,weight_ocup,na.rm = TRUE),
-            n=n(),.groups="drop") %>% 
+  filter(date_m>as.Date("2020-05-01")) 
+
+reg<-lm(positive~as.factor(ocup_cat_agg):as.factor(date_m)-1,dta_covida ,weights = weight_ocup)
+
+rates <-broom::tidy(reg, conf.int = TRUE)
+rates <-rates %>%   mutate(term=str_remove_all(term,"as.factor\\(ocup_cat_agg\\)"),
+                           term=str_remove_all(term,"as.factor\\(date_m\\)"))  %>% 
+  separate(col=term,into=c("ocup_cat_agg","date_m"),sep=":") %>% 
+  mutate(rate_pos=estimate*100,
+         q025=conf.low*100,
+         q975=conf.high*100)  %>%
+  select(ocup_cat_agg,date_m,rate_pos,q025,q975)
+
+
+obs<-  dta_sum %>% 
+  group_by(ocup_cat_agg,date_m) %>% 
+  dplyr::summarise(mean=mean(positive),
+                   Obs=formatC(n(), format="f", big.mark=",", digits=0),
+                   .groups="drop")
+
+
+
+rates<- rates %>% 
+  mutate(date_m=ymd(date_m)) %>% 
+  left_join(.,obs) %>% 
+  mutate(rate_pos=ifelse(is.na(rate_pos),0,rate_pos))
+
+
+rates<- rates %>% mutate(q025=ifelse(q025<0,0,q025),
+                         q025=ifelse(rate_pos==0,NA,q025),
+                         q975=ifelse(q975>100,100,q975),
+                         q975=ifelse(rate_pos==0,NA,q975),
+                         Obs=ifelse(is.na(Obs),0,Obs))
+
+rates <- rates %>% complete(ocup_cat_agg,date_m = seq.Date(ymd("2020-04-01"), ymd("2021-02-01"), by="month"))%>%
   filter(!is.na(ocup_cat_agg))
 
 
-dta_sum<- dta_sum %>% mutate(test_day=lubridate::ymd(test_day))
 
-
-#completes missing days
-dta_sum<- dta_sum %>% complete(ocup_cat_agg,nesting(test_day))
-
-#db<-dta_sum
-smoother<-function(db){
-  db[,"rate_pos"]<-zoo::na.fill(db[,"rate_pos"],"extend")
-  x<-predict(loess(rate_pos ~ as.numeric(test_day) , data = db, span=smoothing),se=TRUE)
-  tibble(rate_pos=x$fit,rate_pos_se=x$se.fit)
-}
-
-
-db_sum_smoothed<- dta_sum %>% 
-  group_by(ocup_cat_agg) %>% 
-  arrange(test_day) %>% 
-  do(rate_pos = smoother(.)) %>% 
-  unnest(rate_pos) %>% 
-  mutate(test_day=dta_sum$test_day)
-
-
-
-# geom_ribbon -------------------------------------------------------------
-
-p<-ggplot(db_sum_smoothed) +
-  geom_line(aes(x=test_day, y=rate_pos,lty=ocup_cat_agg,col=ocup_cat_agg),size=.7) +
-  geom_ribbon(aes(x=test_day,ymin = rate_pos - qnorm(0.975)*rate_pos_se,  ymax = rate_pos + qnorm(0.975)*rate_pos_se,group=ocup_cat_agg), alpha=0.2) +
+# No Conf Intervals -------------------------------------------------------
+p<-ggplot(rates) +
+  geom_line(aes(x=date_m, y=rate_pos,linetype=ocup_cat_agg,col=ocup_cat_agg),size=1, position=position_dodge(width =4)) +
+  geom_point(aes(x=date_m, y=rate_pos,shape=ocup_cat_agg,col=ocup_cat_agg),size=2, position=position_dodge(width =4),alpha=0.6) +
+  #geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=ocup_cat_agg), width=.1, position=position_dodge(width = 4),alpha=0.6) +
   geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  ylab('Positivity Rate') +
-  #ylim(c(-0.015,.2)) +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
                             as.Date("2021-04-01"), "1 month"),
@@ -125,51 +127,27 @@ p<-ggplot(db_sum_smoothed) +
   theme_bw() +
   theme(legend.title= element_text(size=14) ,
         legend.position="bottom",
-        legend.text=element_text(size=14),
-        axis.title = element_text(size=14),
+        legend.text=element_text(size=12),
+        axis.title = element_text(size=12),
         panel.grid.major.x = element_blank(),
         legend.background = element_rect(fill='transparent'),
-        axis.text.x =element_text( angle=0,hjust=0.5,size=14),
+        axis.text.x =element_text( angle=0,hjust=0.5,size=12),
         axis.text.y =element_text( size=12),
         rect = element_rect(colour = "transparent", fill = "white")
   ) +
-  scale_color_aaas()  +
-  guides(col=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5),
-         lty=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5))
-p
-p + annotate("text",x=as.Date("2020-08-25"), y=0.16, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
-ggsave(paste0("views/Fig3_a_",smoothing,".pdf"),height=6,width=10)
+  scale_color_manual(values=c("#5DC863FF",  "#FDE725FF","#3B528BFF","#21908CFF",  "#440154FF"))+
+  scale_linetype_manual(values=c(2,3,4,1,5)) +
+  guides(col=guide_legend(title='Occupations',nrow = 2,title.position = "top",title.hjust =0.5),
+         shape=guide_legend(title='Occupations',nrow = 2,title.position = "top",title.hjust =0.5),
+         lty=guide_legend(title='Occupations',nrow = 2,title.position = "top",title.hjust =0.5)) + 
+  annotate("text",x=as.Date("2020-08-25"), y=12, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.04)
+p + scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5),limits=c(0,14)) 
+ggsave(here(paste0("views/Fig3a.pdf")),height=6.5,width=10)
 
 
 
 
-# no CI -------------------------------------------------------------
-
-ggplot(db_sum_smoothed) +
-  geom_line(aes(x=test_day, y=rate_pos,lty=ocup_cat_agg,col=ocup_cat_agg),size=.7) +
-  #geom_ribbon(aes(x=test_day,ymin = rate_pos - qnorm(0.975)*rate_pos_se,  ymax = rate_pos + qnorm(0.975)*rate_pos_se,group=ocup_cat_agg), alpha=0.2) +
-  geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  ylab('Positivity Rate') +
-  #ylim(c(-0.015,.2)) +
-  scale_x_date("", date_labels = "%b %Y",
-               breaks = seq(as.Date("2020-03-01"),
-                            as.Date("2021-04-01"), "1 month"),
-               expand = c(0.01, 10)) +
-  theme_bw() +
-  theme(legend.title= element_text(size=14) ,
-        legend.position="bottom",
-        legend.text=element_text(size=14),
-        axis.title = element_text(size=14),
-        panel.grid.major.x = element_blank(),
-        legend.background = element_rect(fill='transparent'),
-        axis.text.x =element_text( angle=0,hjust=0.5,size=14),
-        axis.text.y =element_text( size=12),
-        rect = element_rect(colour = "transparent", fill = "white")
-  ) +
-  scale_color_aaas()  +
-  guides(col=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5),
-         lty=guide_legend(title='Occupations',nrow = 3,title.position = "top",title.hjust =0.5))+ 
-  annotate("text",x=as.Date("2020-08-25"), y=0.16, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) 
-ggsave(paste0("views/Fig3_a_",smoothing,"_no_CI.pdf"),height=6,width=10)
-
-
+# With Conf Intervals -------------------------------------------------------
+p+ geom_errorbar(aes(x=date_m,ymin=q025, ymax=q975,col=ocup_cat_agg), width=.1, position=position_dodge(width = 4),alpha=0.6) +
+   scale_y_continuous('Positivity Rate',breaks = c(0,2.5,5,7.5,10,12.5,15,17.5),limits=c(0,20)) 
+ggsave(here(paste0("views/Fig3a_CI.pdf")),height=6,width=10)
