@@ -21,10 +21,10 @@ notes.txt
 /lit_PCR/
 /Nature Comms Revisions/
 /views/
-/views/0_clean_covida_cats.R
-/views/0_clean_covida.R
-/views/0_clean_sds.do
-/view/_COVIDA_SALESFORCE_DATA_TREATMENT Feb 2021_CDR.do
+/Code/0_clean_covida_cats.R
+/Code/0_clean_covida.R
+/Code/0_clean_sds.do
+/Code/_COVIDA_SALESFORCE_DATA_TREATMENT Feb 2021_CDR.do
 
 
 
