@@ -84,6 +84,7 @@ rates_jan<- rates_jan %>%
 
 
 rs<-bind_rows(rates_oct,rates_jan)
+
 rs<- rs %>% mutate(grp=factor(grp, levels=c(1,2),  labels=c("November 30th","March 3th"),ordered = TRUE))
 
 
@@ -100,6 +101,9 @@ rs<- rs %>% mutate(acumm_covid_covida=acumm_covid_covida*100,
 
 dta<-read_dta(here("Data/localidad_formaps.dta"))
 loc_data<-merge(rs,dta, by = "localidad")
+
+
+saveRDS(loc_data,here("Data/temp/calculations_locality.rds"))
 
 ggplot(data=loc_data, aes( y=acumm_covid_covida, group=grp, col=grp, x = reorder(localidad, estrato_prom)))+
   geom_point(aes(shape=grp),size=2, position=position_dodge(width = .4))+

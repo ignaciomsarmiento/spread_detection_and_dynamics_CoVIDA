@@ -9,19 +9,14 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","haven","ggsci","tidyr","here")
+pkg<-list("dplyr","ggplot2","stringr","haven","tidyr","here")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
 
 
 
-
-# Smoothing parameter -----------------------------------------------------
-smoothing<- 0.7
-set.seed(101010)
-# - -----------------------------------------------------------------------
-
+# Helper Functions --------------------------------------------------------
 transf_ocup<-function(db){
   db <- db %>%
     mutate(ocup_cat = case_when(
@@ -66,8 +61,7 @@ transf_ocup_agg<-function(db){
     ))
 }
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
-#dta_covida<-read_dta(here("Data/Data_CoVIDA.dta"))
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
 
@@ -76,71 +70,70 @@ dta_covida<-transf_ocup(dta_covida)
 
 
 
+reg<-lm(positive~as.factor(ocup_cat):as.factor(date_m)-1,dta_covida ,weights = weight_ocup)
+rates <-broom::tidy(reg, conf.int = TRUE)
 
 
-dta_sum<-dta_covida %>% 
-  group_by(test_day, ocup_cat)%>%
-  filter(date_m>as.Date("2020-05-01")) %>% 
-  summarise(rate_pos=weighted.mean(positive,weight_ocup,na.rm = TRUE),
-            n=n(),.groups="drop") %>% 
-  filter(!is.na(ocup_cat))
+rates <-rates %>%   mutate(term=str_remove_all(term,"as.factor\\(ocup_cat\\)"),
+                           term=str_remove_all(term,"as.factor\\(date_m\\)"))  %>% 
+                    separate(col=term,into=c("ocup_cat","date_m"),sep=":") %>% 
+    mutate(rate_pos=estimate*100,
+         q025=conf.low*100,
+         q975=conf.high*100)  %>%
+  select(ocup_cat,date_m,rate_pos,q025,q975)
 
 
-dta_sum<- dta_sum %>% mutate(test_day=lubridate::ymd(test_day))
+obs<-  dta_covida %>% 
+  group_by(ocup_cat,date_m) %>% 
+  dplyr::summarise(mean=mean(positive),
+                   Obs=formatC(n(), format="f", big.mark=",", digits=0),
+                   .groups="drop")
 
 
-#completes missing days
-dta_sum<- dta_sum %>% complete(ocup_cat,nesting(test_day))
 
-#db<-dta_sum
-smoother<-function(db){
-  db[,"rate_pos"]<-zoo::na.fill(db[,"rate_pos"],"extend")
-  x<-predict(loess(rate_pos ~ as.numeric(test_day) , data = db, span=smoothing),se=TRUE)
-  tibble(rate_pos=x$fit,rate_pos_se=x$se.fit)
-}
-
-
-db_sum_smoothed<- dta_sum %>% 
-  group_by(ocup_cat) %>% 
-  arrange(test_day) %>% 
-  do(rate_pos = smoother(.)) %>% 
-  unnest(rate_pos) %>% 
-  mutate(test_day=dta_sum$test_day)
+rates<- rates %>% 
+  mutate(date_m=ymd(date_m)) %>% 
+  left_join(.,obs) %>% 
+  mutate(rate_pos=ifelse(is.na(rate_pos),0,rate_pos))
 
 
 
 
 
+#
+rates<- rates %>% mutate(q025=ifelse(q025<0,0,q025),
+                 q025=ifelse(rate_pos==0,NA,q025),
+                 q975=ifelse(q975>100,100,q975),
+                 q975=ifelse(rate_pos==0,NA,q975),
+                 Obs=ifelse(is.na(Obs),0,Obs))
 
 
+rates<- rates %>% 
+      mutate(q975=ifelse(q975>22,22,q975))
 
-# geom_ribbon -------------------------------------------------------------
-
-p<-ggplot(db_sum_smoothed) +
-  geom_line(aes(x=test_day, y=rate_pos,group=ocup_cat),size=.7) +
-  geom_ribbon(aes(x=test_day,ymin = rate_pos - qnorm(0.975)*rate_pos_se,  ymax = rate_pos + qnorm(0.975)*rate_pos_se,group=ocup_cat), alpha=0.2) +
-  geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  ylab('Positivity Rate') +
-  #ylim(c(-0.015,.2)) +
+ggplot(rates, aes(x=date_m, y=rate_pos, label=Obs))+
+  geom_point(size=2)+
+  geom_line() +
+  geom_errorbar(aes(ymin=q025, ymax=q975), width=.2, alpha=0.6, position=position_dodge(width = .4)) +
   scale_x_date("", date_labels = "%b %Y",
-               breaks = seq(as.Date("2020-03-01"),
+               breaks = seq(as.Date("2020-06-01"),
                             as.Date("2021-03-01"), "1 month"),
-               expand = c(0.01, 0.01)) +
-  theme_bw() +
+               expand = c(0.05, 3)) +
+  #ylab() +
+  scale_y_continuous("Positivity (%)",limits=c(0,22)) +
+  geom_text(aes(label = Obs, y=21, x=date_m),
+            size = 4, 
+            nudge_x = 0.9,
+            check_overlap = T) +
+  annotate("text", label = "Obs:", size = 4, x = ymd("2020-05-20"), y = 21) +
+  theme_bw()  +
   theme(legend.position="bottom",
         legend.direction="horizontal",
         panel.grid.major.x = element_blank(),
         legend.background = element_rect(fill='transparent'),
         rect = element_rect(colour = "transparent", fill = "white"),
-        axis.text.x =element_text( angle=60,hjust=1),
+        axis.text.x =element_text(size=12, angle=60,hjust=1),
+        axis.text.y =element_text( size=12),
         strip.text = element_text(size=14)) +
-  guides(col=guide_legend(title='',nrow = 2),
-         lty=guide_legend(title='',nrow = 2)
-  )  + scale_color_aaas()
-p + facet_wrap(. ~ ocup_cat, ncol = 3)
-
-#p + annotate("text",x=as.Date("2020-09-06"), y=0.18, label="Selective isolation", colour="black", angle=0,size=3) 
-ggsave(here(paste0("views/Fig_Occupations_",smoothing,"2.pdf")),height=20,width=18)
-
-
-
+  facet_wrap(. ~ ocup_cat, ncol = 3)
+ggsave(here(paste0("views/Fig_Occupations.pdf")),height=20,width=18)

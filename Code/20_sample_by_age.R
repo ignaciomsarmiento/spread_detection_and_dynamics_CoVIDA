@@ -14,7 +14,7 @@ lapply(pkg, require, character.only=T)
 rm(pkg)
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Data_CoVIDA.dta"))
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 
 rates <-broom::tidy(lm(positive~as.factor(age_group)-1,dta_covida ,weights = weight_ocup), conf.int = TRUE) 
@@ -48,6 +48,7 @@ rates<- rates %>%
   left_join(.,obs) %>% 
   select(age_group,rate_pos,ci,Obs)
 
+rates
 write.xlsx(rates,here("Results_tables/age_group.xlsx"))
 
 

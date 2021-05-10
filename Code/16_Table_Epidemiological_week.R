@@ -46,8 +46,7 @@ transf_ocup<-function(db){
 
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Datos_Salesforce_treated_feb19_clean.dta"))
-#dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 
 dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
@@ -60,11 +59,11 @@ dta_covida<- dta_covida %>% mutate(ocup_cat=ifelse(is.na(ocup_cat),"Not Classifi
 
 
 translate<-read.xlsx(here("Data/translate.xlsx"))
-translate$ocupacion_desagregada<-trimws(translate$ocupacion_desagregada)
+translate$desag_ocupation<-trimws(translate$ocupacion_desagregada)
 translate$ocup_desag_en<-str_to_title(translate$ocup_desag_en)
 
 ocup_desag_en<- dta_covida %>% 
-  group_by(ocup_cat, ocupacion_desagregada) %>% 
+  group_by(ocup_cat, desag_ocupation) %>% 
   dplyr::summarise(Obs=n(),
                    .groups="drop")%>% 
   left_join(.,translate)  %>% 
@@ -76,7 +75,7 @@ ocup_desag_en<- dta_covida %>%
 
 
 
-rates <-broom::tidy(lm(positive~as.factor(ocup_cat)-1,dta_covida ,weights = weight_ocup), conf.int = TRUE) 
+rates <-broom::tidy(lm(positive~as.factor(ocup_cat)-1,dta_covida), conf.int = TRUE) 
 rates <-rates %>%   mutate(term=str_remove_all(term,"as.factor\\(ocup_cat\\)")) %>% 
   mutate(ocup_cat=term,
          rate_pos=estimate*100,
@@ -104,4 +103,5 @@ rates<- rates %>%
           left_join(.,obs) %>% 
           select(ocup_cat,ocup_n,rate_pos,ci,Obs)
 
+rates
 write.xlsx(rates,here("Results_tables/Epid_week.xlsx"))

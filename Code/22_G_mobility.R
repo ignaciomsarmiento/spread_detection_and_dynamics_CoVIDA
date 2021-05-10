@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","ggplot2","stringr","openxlsx","lubridate",'tidyr','rsample','here')
+pkg<-list("dplyr","ggplot2","stringr","lubridate",'tidyr','here')
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -66,7 +66,7 @@ ggplot(google_long) +
         axis.text.x =element_text( angle=0),
         rect = element_rect(colour = "transparent", fill = "white"),
         axis.title = element_text(), plot.margin = unit(c(2,2,1,1), "lines"))
-ggsave(paste0("views/google_mobility.pdf"),height=9,width=8)
+ggsave(here("views/google_mobility.pdf"),height=9,width=8)
 
 
 

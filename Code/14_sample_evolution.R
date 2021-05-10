@@ -25,22 +25,29 @@ dta_pub<-dta_covida %>%
 
 dta_pub_wide<-dta_pub %>%
           pivot_wider(names_from=public_campaign,values_from=n,values_fill=0) %>% 
-          mutate(date_m=as.character(date_m))
+          mutate(date_m=paste(month(date_m, label = TRUE, abbr = FALSE),year(date_m),sep=" "),
+                 date_m=as.character(date_m))
 
 
 dta_pub_t<-dta_covida %>%
   group_by(public_campaign) %>%
   tally()  %>%
   pivot_wider(names_from=public_campaign,values_from=n,values_fill=0)  %>% 
-  mutate(date_m="total")
+  mutate(date_m="Total")
 
 dta_pub_wide<-bind_rows(dta_pub_wide,dta_pub_t)
 
 dta_pub_wide<-dta_pub_wide %>%
   mutate(total=public+private,
          perc_public=public/total,
-         perc_private=private/total) %>% 
-  dplyr::select(date_m,private,public,total)
-
+         perc_private=private/total,
+         ) %>% 
+  dplyr::select(date_m,private,public,total) %>% 
+  mutate(
+    private=formatC(private, format="f", big.mark=",", digits=0),
+    public=formatC(public, format="f", big.mark=",", digits=0),
+    total=formatC(total, format="f", big.mark=",", digits=0),
+  )
+dta_pub_wide
 
 write.xlsx(dta_pub_wide,here("Results_tables/sample_evolution.xlsx"))

@@ -30,7 +30,7 @@ sum_sds<- sds_dta %>%
   rename(sds_pop=n)
 
 # covida ------------------------------------------------------------------
-dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) 
+dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 sum_covida<- dta_covida %>% 
   group_by(stratum) %>% 
@@ -50,6 +50,15 @@ poblacion <- poblacion %>%
 
 #table
 pop_by_strata<- poblacion %>% 
-      select(label_stratum,covida_pop,covida_perc,sds_pop,sds_perc,pob_stratum) 
+      select(label_stratum,covida_pop,covida_perc,sds_pop,sds_perc,pob_stratum)  %>% 
+  mutate(covida_pop=formatC(covida_pop, format="f", big.mark=",", digits=0),
+         covida_perc=formatC(covida_perc, format="f", big.mark=",", digits=2),
+         sds_pop=formatC(sds_pop, format="f", big.mark=",", digits=0),
+         sds_perc=formatC(sds_perc, format="f", big.mark=",", digits=2),
+         pob_stratum=formatC(pob_stratum, format="f", big.mark=",", digits=0)
+  )
+
+pop_by_strata
+
 
 write.xlsx(pop_by_strata,here("Results_tables/pop_by_strata.xlsx"))
