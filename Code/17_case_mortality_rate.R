@@ -19,7 +19,7 @@ sds<-read_dta(here("Data/sds_dta.dta"))
 sds$death<-NA
 sds$death[sds$recuperado == "Fallecido"]<-1
 
-sds$test_day
+
 sds_dta <- sds %>% 
   dplyr::select(test_day, death ) %>% 
  filter(!is.na(death)) %>% 
