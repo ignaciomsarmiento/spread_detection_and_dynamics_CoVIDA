@@ -49,7 +49,7 @@ transf_ocup<-function(db){
 dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
 
-dta_covida<- dta_covida %>% filter(!(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas")))
+dta_covida<- dta_covida %>% mutate(ocup_cat=ifelse(ocup_cat%in%c("agricultores y afines","personal de servicio a bordo","personal servicio comunitario","servicios apoyo produccion","entrenadores actividades deportivas"),NA,ocup_cat))
 
 
 dta_covida<-transf_ocup(dta_covida)
