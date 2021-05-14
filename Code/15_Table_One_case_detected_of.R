@@ -13,13 +13,10 @@ pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr","Hmisc")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
-
-
 # Parameters --------------------------------------------------------------
 set.seed(101010) #seed
 pop_bogota<-8044713
-strat_pob<-read_dta(here("Data/pob_strat.dta"))
-days_fin<-30*9
+strat_pob<-read_dta("Data/pob_strat.dta")
 # SDS ---------------------------------------------------------------
 sds_dta<-read_dta(here("Data/sds_dta.dta"))
 

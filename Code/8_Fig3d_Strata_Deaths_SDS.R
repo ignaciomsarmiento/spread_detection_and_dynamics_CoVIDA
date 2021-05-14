@@ -20,10 +20,9 @@ rm(pkg)
 sds<-read_dta(here("Data/sds_dta.dta"))
 
 sds_dta <-  sds %>% 
-            filter(fechatomademuestra!="") %>% 
             mutate(death=ifelse(recuperado=="Fallecido",1,
                         ifelse(recuperado=="Recuperado",0,NA)),
-                  test_day=dmy(fechatomademuestra)) %>% 
+                  ) %>% 
             filter(test_day>as.Date("2020-04-01")) %>%
             filter(!is.na(stratum)) %>% 
             filter(!is.na(test_day)) %>% 
@@ -58,7 +57,7 @@ ggplot(db_sum) +
   geom_line(aes(x=date_m, y=rate_pos,linetype=stratum,col=stratum),size=1, position=position_dodge(width =4)) +
   geom_point(aes(x=date_m, y=rate_pos,shape=stratum,col=stratum),size=2, position=position_dodge(width =4),alpha=0.6) +
   geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
-  ylab('Monthly SARS-CoV-2 Deaths \n per 100k Inhabitants') +
+  ylab('Monthly COVID-19 Deaths \n per 100k Inhabitants') +
   scale_x_date("", date_labels = "%b %Y",
                breaks = seq(as.Date("2020-03-01"),
                             as.Date("2021-04-01"), "1 month"),

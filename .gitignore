@@ -1,7 +1,24 @@
 
 # Created by https://www.gitignore.io/api/r,macos
 ##Folders to ignore and internal files
-/Data/
+/Data/2021-01-31_CO_Bogota_Mobility_Report_en.pdf
+/Data/Data_CoVIDA.dta
+/Data/Datos_Salesforce_treated_CDR_act.dta
+/Data/Datos_Salesforce_treated_feb19_clean.dta
+/Data/Figura2_dta/
+/Data/Figura3_dta/
+/Data/Ocupacion_desag_epid_week.xlsx
+/Data/Region_Mobility_Report_CSVs
+/Data/casos_ocupaciones_bogota_feb_1_0.xlsx
+/Data/cats_new_fixed.dta
+/Data/files.txt
+/Data/sds_dta_Pre_github.dta
+/Data/sds_dta_old.dta
+/Data/sivigila
+/Data/stratum_all.dta
+/Data/temp
+
+
 /Feedback Iceberg Paper/
 /Figuras_PPT/
 /Icon/
