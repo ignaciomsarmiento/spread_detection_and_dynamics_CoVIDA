@@ -144,7 +144,7 @@ ggplot(data=covida)+
   geom_ribbon(aes(x=date_m,ymin = q025_covida_100,  ymax = q975_covida_100,group=grp), alpha=0.2) +
   scale_color_manual(values=c("#008B45B2" ,"#631879B2" )) +
   scale_linetype_manual(values=c("solid","dashed")) +
-  ylab("Daily  SARS-CoV-2 Cases \n per 100,000 Inhabitants") +
+  ylab("Daily COVID-19 Cases \n per 100,000 Inhabitants") +
   geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
   annotate("text",x=as.Date("2020-08-25"), y=350, label="End of quarantine", colour="black", angle=0,size=5,hjust=-0.02) +
   scale_x_date("", date_labels = "%b %Y",
@@ -217,7 +217,7 @@ ggplot(data=accum_covida %>% filter(date_m>=as.Date("2020-06-01")))+
   geom_errorbar(data=ins,aes(x=date_m,ymin = ins_q025,ymax=ins_q975)) +
   #geom_vline(aes(xintercept=as.Date("2020-08-25")), linetype = "longdash",col="darkred") +
   #annotate("text",x=as.Date("2020-09-15"), y=0.6, label="End of quarantine", colour="black", angle=0,size=3) +
-  ylab("Accumulated  SARS-CoV-2 Cases \n as % of Population") +
+  ylab("Accumulated COVID-19 Cases \n as % of Population") +
   scale_color_manual(values=c("#008B45B2" ,"#631879B2" )) +
   scale_linetype_manual(values=c("solid","dashed")) +
   scale_fill_manual(values=c("black","#008B45B2" ,"#631879B2")) +
