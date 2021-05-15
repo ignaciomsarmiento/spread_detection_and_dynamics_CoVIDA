@@ -8,7 +8,8 @@
 /Data/Figura2_dta/
 /Data/Figura3_dta/
 /Data/Ocupacion_desag_epid_week.xlsx
-/Data/Region_Mobility_Report_CSVs
+#/Data/Region_Mobility_Report_CSVs
+/Data/Region_Mobility_Report_CSVs.zip
 /Data/casos_ocupaciones_bogota_feb_1_0.xlsx
 /Data/cats_new_fixed.dta
 /Data/files.txt
