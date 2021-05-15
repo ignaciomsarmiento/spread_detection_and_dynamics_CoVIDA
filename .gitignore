@@ -2,7 +2,7 @@
 # Created by https://www.gitignore.io/api/r,macos
 ##Folders to ignore and internal files
 /Data/2021-01-31_CO_Bogota_Mobility_Report_en.pdf
-/Data/Data_CoVIDA.dta
+/Data/covida_dta.Rds
 /Data/Datos_Salesforce_treated_CDR_act.dta
 /Data/Datos_Salesforce_treated_feb19_clean.dta
 /Data/Figura2_dta/
@@ -17,7 +17,7 @@
 /Data/sivigila
 /Data/stratum_all.dta
 /Data/temp
-
+/views/
 
 /Feedback Iceberg Paper/
 /Figuras_PPT/
