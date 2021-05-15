@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","stringr","openxlsx","haven",'tidyr',"lubridate","here")
+pkg<-list("dplyr","stringr","openxlsx","haven",'tidyr',"lubridate","here","openxlsx")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -108,34 +108,35 @@ iceberg_all_month<-iceberg_all_month%>%
 
 
 iceberg_exp<-iceberg_all_month%>% 
-  select(date_m,deaths_day,casos_day,tot_day_cases_covida, death_monthsds, death_month2, ) %>% 
+  select(date_m,deaths_day,casos_day,tot_day_cases_covida, death_monthsds, death_month2 ) %>% 
   mutate(date_m=as.character.Date(date_m),
         casos_day=casos_day,
         tot_day_cases_covida=tot_day_cases_covida,
         month=paste(month(date_m, label = TRUE, abbr = FALSE),year(date_m),sep=" ")) %>% 
-  filter(date_m>=as.Date("2020-06-01"), date_m<as.Date("2021-03-01"))
-  
+  filter(date_m>=as.Date("2020-06-01"), date_m<as.Date("2021-03-01")) %>% 
+  select(month,deaths_day,casos_day,tot_day_cases_covida,death_monthsds,death_month2) %>% 
+  mutate(deaths_day=formatC(deaths_day, format="f", big.mark=",", digits=2),
+         casos_day=formatC(casos_day, format="f", big.mark=",", digits=0),
+         tot_day_cases_covida=formatC(tot_day_cases_covida, format="f", big.mark=",", digits=0),
+         death_monthsds=formatC(death_monthsds, format="f", big.mark=",", digits=2),
+         death_month2=formatC(death_month2, format="f", big.mark=",", digits=2)
+         )
 iceberg_exp
 
 write_xlsx(iceberg_exp,here("Results_tables/all_months.xlsx"))
 
 
-iceberg_exp<-iceberg_all_month%>%
+iceberg_agg<-iceberg_all_month%>%
   filter(date_m == as.Date('2020-8-01')) %>%  #Could be any date between july-jan. I am just doing this to easily get the output without openeing the df
   select(sds_tot2, sds_tot_casos2, covida_av, deaths_agg_sds2, deaths_agg2) %>% 
   mutate(sds_tot_casos2=sds_tot_casos2,
-         covida_av=covida_av)
-iceberg_exp
-write_xlsx(iceberg_exp,here("Results_tables/all_agg.xlsx"))
-
-
-iceberg_exp<-iceberg_all_month%>%
-  filter(date_m == as.Date('2020-8-01')) %>%  #Could be any date between july-jan. I am just doing this to easily get the output without openeing the df
-  select(sds_tot, sds_tot_casos, covida_tot, deaths_agg_sds, deaths_agg) %>% 
-  mutate(sds_tot_casos=sds_tot_casos,
-         covida_tot=covida_tot)
-iceberg_exp
-write_xlsx(iceberg_exp,here("Results_tables/all_agg.xlsx"))
-
-
+         covida_av=covida_av) %>% 
+  mutate(sds_tot2=formatC(sds_tot2, format="f", big.mark=",", digits=2),
+         sds_tot_casos2=formatC(sds_tot_casos2, format="f", big.mark=",", digits=0),
+         covida_av=formatC(covida_av, format="f", big.mark=",", digits=0),
+         deaths_agg_sds2=formatC(deaths_agg_sds2, format="f", big.mark=",", digits=2),
+         deaths_agg2=formatC(deaths_agg2, format="f", big.mark=",", digits=2)
+  )
+iceberg_agg
+write_xlsx(iceberg_agg,here("Results_tables/all_agg.xlsx"))
 
