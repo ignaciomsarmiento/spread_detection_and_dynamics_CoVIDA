@@ -27,15 +27,9 @@ days_fin<-30*9
 # covida ------------------------------------------------------------------
 dta_covida<-read_dta(here("Data/Data_CoVIDA.dta")) %>%  filter(exclude_symptomatic==1)
 
-dta_covida<- dta_covida %>%
-  mutate(localidad=localidadderesidencianombredeloc)
 
 poblacion<-read_dta(here("Data/pob_loc.dta")) %>% 
   rename(poblacion_agregada=pob_loc)
-
-
-# dta_covida<- dta_covida %>% 
-#   filter(!is.na(pob_loc)) 
 
 
 

@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr")
+pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr","openxlsx")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 
@@ -44,6 +44,8 @@ obs<-  dta_covida %>%
 rates<- rates %>% 
   left_join(.,obs) %>% 
   select(gender,rate_pos,ci,Obs)
+
+rates
 
 write.xlsx(rates,here("Results_tables/gender.xlsx"))
 

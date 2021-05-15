@@ -9,7 +9,7 @@ local({r <- getOption("repos"); r["CRAN"] <- "http://cran.r-project.org"; option
 
 
 #Load Packages
-pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr")
+pkg<-list("dplyr","haven",'tidyr',"lubridate","broom","here","stringr","openxlsx")
 lapply(pkg, require, character.only=T)
 rm(pkg)
 

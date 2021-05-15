@@ -117,7 +117,7 @@ iceberg_exp<-iceberg_all_month%>%
   
 iceberg_exp
 
-#write_xlsx(iceberg_exp,"Iceberg Paper/Results_tables/all_months.xlsx")
+write_xlsx(iceberg_exp,here("Results_tables/all_months.xlsx"))
 
 
 iceberg_exp<-iceberg_all_month%>%
@@ -126,7 +126,7 @@ iceberg_exp<-iceberg_all_month%>%
   mutate(sds_tot_casos2=sds_tot_casos2,
          covida_av=covida_av)
 iceberg_exp
-write_xlsx(iceberg_exp,"Iceberg Paper/Results_tables/all_agg.xlsx")
+write_xlsx(iceberg_exp,here("Results_tables/all_agg.xlsx"))
 
 
 iceberg_exp<-iceberg_all_month%>%
@@ -135,7 +135,7 @@ iceberg_exp<-iceberg_all_month%>%
   mutate(sds_tot_casos=sds_tot_casos,
          covida_tot=covida_tot)
 iceberg_exp
-write_xlsx(iceberg_exp,"Iceberg Paper/Results_tables/all_agg.xlsx")
+write_xlsx(iceberg_exp,here("Results_tables/all_agg.xlsx"))
 
 
 

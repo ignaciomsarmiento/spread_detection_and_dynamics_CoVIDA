@@ -69,4 +69,4 @@ p<-ggplot(rates, aes(x=date_m, y=rate_pos)) +
   geom_text(aes(label=Obs), y = 7, size= 4, nudge_x = 0.9, check_overlap = T, color="black")+
   annotate("text", label = "Obs:", size = 4, x = ymd("2020-05-19"), y = 7)
 p
-ggsave("views/raw_positivity_months.pdf",height=6,width=8)
+ggsave(here("views/raw_positivity_months.pdf"),height=6,width=8)

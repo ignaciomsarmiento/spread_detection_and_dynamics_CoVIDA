@@ -27,7 +27,7 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 
 ## Code files:
 
-- `_Main.sh` Contains the sequence of execution of scripts to reproduce the figures and tables in the paper and appendix. It also creates a folder (logs) to house  log files: 
+- `_Main.sh` Contains the sequence of execution of scripts to reproduce the figures and tables in the paper and appendix. It also creates a folders to house  tables (Results_tables), figures (views), temporary data (Data/temp), and log files. To run it on a terminal with `zsh` shell,  type `sh _Main.sh &` : 
 	
 	- `1a_fig1_analytic_calculations.R` generates the calculations for Figures 1a and 1b, saves it to `temp/Fig1_calculations.RData`
 	- `1b_fig1_analytic_plots.R` plots  Figures 1a and 1b, calls `temp/Fig1_calculations.RData`
@@ -65,8 +65,6 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 - Tables are saved in a `Results_tables` folder
 
 
-
-
  
 ## Data dictionary
 
@@ -89,10 +87,14 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 	- `gender`													  gender participant
 
 - `sds_dta.dta`:
-	- `casos`                                                       =1 if it was a reported case (the db includes all reported cases)	
-	- `test_day`													date of consult 
-	- `fechatomademuestra` 											date that the sample was taken
+	- `case_id` 													case id
 	- `recuperado`  												health status
 	- `stratum` 													socioeconomic stratum
 	- `localidadasis`												locality where the individual resides
+	- `casos`                                                       =1 if it was a reported case (the db includes all reported cases)	
+	- `test_day`													day that the test was administered
+
+	
+	
+	
 
