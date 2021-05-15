@@ -123,7 +123,7 @@ iceberg_exp<-iceberg_all_month%>%
          )
 iceberg_exp
 
-write_xlsx(iceberg_exp,here("Results_tables/all_months.xlsx"))
+write.xlsx(iceberg_exp,here("Results_tables/all_months.xlsx"))
 
 
 iceberg_agg<-iceberg_all_month%>%
@@ -138,5 +138,5 @@ iceberg_agg<-iceberg_all_month%>%
          deaths_agg2=formatC(deaths_agg2, format="f", big.mark=",", digits=2)
   )
 iceberg_agg
-write_xlsx(iceberg_agg,here("Results_tables/all_agg.xlsx"))
+write.xlsx(iceberg_agg,here("Results_tables/all_agg.xlsx"))
 

@@ -67,6 +67,21 @@ ggplot(loc_data ) +
   theme_void()+
   facet_wrap(. ~ grp) +
   theme(plot.title = element_text(hjust = 0.5))+
+  theme(plot.title=element_text(size=10,  colour="black"),
+        panel.spacing = unit(8, "lines"))  
+ggsave(here("views/covida_all_new.pdf"))
+
+
+
+ggplot(loc_data ) +
+  geom_sf(aes(fill = rate_pos*100), size = 0.0001, color = "black") +  
+  coord_sf(crs = wgs.84)  +
+  scale_fill_continuous(low='thistle2', high='darkred', 
+                        guide='colorbar', name="", 
+                        oob = scales::squish)+
+  theme_void()+
+  facet_wrap(. ~ grp) +
+  theme(plot.title = element_text(hjust = 0.5))+
   
   theme(plot.title=element_text(size=10,  colour="black"),
         panel.spacing = unit(8, "lines"))  

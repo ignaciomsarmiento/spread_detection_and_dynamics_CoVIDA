@@ -15,9 +15,16 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 - `Data/Data_CoVIDA.dta` CoVIDA Sample
 - `Data/sds_dta.dta`     HBS Sample
 - `Data/pob_cats.dta`    Population by occupational category
+- `Data/pob_loc.dta`	 Population by locality
 - `Data/pob_strat.dta`   Population by socioeconomic strata
-- `Data/Region_Mobility_Report_CSVs/2020_CO_Region_Mobility_Report.csv` Data from Google mobility report
-- `Data/translate.xlsx`  contains occupational categories translated to English
+- `Data/Region_Mobility_Report_CSVs` Google mobility report
+- `Data/translate.xlsx`  Occupational categories translated to English
+- `Data/localidades` 	 Shapefiles of Localities in Bogota
+- `Data/INS_detected.xlsx` Seropositivity and Detection Rate from the National Health Institute of Colombia 
+
+
+
+
 
 ## Software:
 
@@ -30,31 +37,31 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 - `_Main.sh` Contains the sequence of execution of scripts to reproduce the figures and tables in the paper and appendix. It also creates a folders to house  tables (Results_tables), figures (views), temporary data (Data/temp), and log files. To run it on a terminal with `zsh` shell,  type `sh _Main.sh &` : 
 	
 	- `1a_fig1_analytic_calculations.R` generates the calculations for Figures 1a and 1b, saves it to `temp/Fig1_calculations.RData`
-	- `1b_fig1_analytic_plots.R` plots  Figures 1a and 1b, calls `temp/Fig1_calculations.RData`
-	- `2_Fig2a_analytic.R` plots Figure 2a
-	- `3_Fig2b_analytic.R` plots Figure 2b
-	- `4_Fig2c_analytic.R` plots Figure 2c 
-	- `5_Fig3a_Ocupation_CoVIDA.R` plots Figure 3a and SI.7a
-	- `6_Fig3b_Strata_CoVIDA.R` plots Figure 3b and SI.7b
-	- `7_Fig3c_Strata_SDS.R` plots Figure 3c 
-	- `8_Fig3d_Strata_Deaths_SDS.R` plots Figure 3d 
-	- `9_FigS1_raw_positivity.R` 
-	- `10_Table_Positivity.R` creates table Table Positivity rate using different CoVIDA subsamples
-	- `11_fig1_analytic_no_weights.R` replicates Figure 1a and 1b excluding occupations weights.
-	- `12_fig1_analytic_exclude_public_campaign.R` replicates Figure 1a and 1b excluding participants from the public campaign
-	- `13_fig1_robust_days.R` replicates Figure 1a and 1b assuming 15.3 instead of 17 days that an individual can test positive
-	- `14_sample_evolution.R`
-	- `15_Table_One_case_detected_of.R`
-	- `16_Table_Epidemiological_week.R`
-	- `17_case_mortality_rate.R`
-	- `18_Population_by_Locality.R`
-	- `19_Population_by_Strata.R` creates
-	- `20_sample_by_age.R`
-	- `21_sample_by_gender.R`
-	- `22_G_mobility.R`
-	- `23_monthly_dynamics_occupation.R`
-	- `24_localidades_maps.R`
-	- `25_Fig_append_INSDET.R` plots Figure SI.10. a and b
+	- `1b_fig1_analytic_plots.R` generates Figure "Accumulated and Daily Cases" panels (a) and (b), calls `temp/Fig1_calculations.RData`
+	- `2_Fig2a_analytic.R` generates Figure "Accumulated Cases by Categories and Period" panel (a)
+	- `3_Fig2b_analytic.R` generates Figure "Accumulated Cases by Categories and Period" panel (b)
+	- `4_Fig2c_analytic.R` generates Figure "Accumulated Cases by Categories and Period" panel (c)
+	- `5_Fig3a_Ocupation_CoVIDA.R` generates Figure "Monthly Dynamics" Panel (a) in main document and in supplementary materials
+	- `6_Fig3b_Strata_CoVIDA.R` generates Figure "Monthly Dynamics" Panel (b) in main document and in supplementary materials
+	- `7_Fig3c_Strata_SDS.R` generates Figure "Monthly Dynamics" Panel (c)
+	- `8_Fig3d_Strata_Deaths_SDS.R` generates Figure "Monthly Dynamics" Panel (d)
+	- `9_FigS1_raw_positivity.R` generates  Figure "Raw Positivity"
+	- `10_Table_Positivity.R` creates table Table "Positivity rate using different CoVIDA subsamples"
+	- `11_fig1_analytic_no_weights.R` replicates Figure "Accumulated and Daily Cases" panels (a) and (b) excluding occupations weights.
+	- `12_fig1_analytic_exclude_public_campaign.R` replicates Figure "Accumulated and Daily Cases" panels (a) and (b) excluding participants from the public campaign
+	- `13_fig1_robust_days.R` replicates Figure "Accumulated and Daily Cases" panels (a) and (b) assuming 15.5 instead of 17 days that an individual can test positive
+	- `14_sample_evolution.R` generates Table  "Number of Tests by Month and Invitation Type"
+	- `15_Table_One_case_detected_of.R` generates Table "One case detected out of.."
+	- `16_Table_Epidemiological_week.R` generates Table "Positivity Rate and Epidemiological by Occupations"
+	- `17_case_mortality_rate.R` generates Table "Case Mortality Rate"
+	- `18_Population_by_Locality.R` generates  Table "Population by Locality"
+	- `19_Population_by_Strata.R` generates Table "Population by Stratum"
+	- `20_sample_by_age.R` generates Table "Positivity Rate by Age"
+	- `21_sample_by_gender.R` generates Table "Positivity Rate by Gender"
+	- `22_G_mobility.R` generates Figure "Mobility Changes by Location" 
+	- `23_monthly_dynamics_occupation.R` generates Figure "Monthly Dynamics by Occupation"
+	- `24_localidades_maps.R` generates Figure "Average Socio-economic Stratum and Dynamics by Locality" and Figure "Raw Positivity by Locality"
+	- `25_Fig_append_INSDET.R` generates "SARS-CoV-2 Seropositivity and Detection Rate across Colombia"
 
 
 
