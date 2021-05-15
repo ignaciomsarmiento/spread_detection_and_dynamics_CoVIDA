@@ -27,8 +27,9 @@
 /Submission/
 /file_structure.txt/
 /temp/
-/views/deprecated/
-/views/tex/
+
+views/*
+
 /Code/deprecated/
 /Code/testing_codes/
 /Code/deprecated_bootstrap/
@@ -36,7 +37,7 @@
 notes.txt
 /lit_PCR/
 /Nature Comms Revisions/
-/views/
+
 /Code/_internal_cleaning/
 
 
