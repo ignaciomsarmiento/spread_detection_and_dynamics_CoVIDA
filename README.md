@@ -20,7 +20,7 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 - `Data/translate.xlsx`  Occupational categories translated to English
 - `Data/localidades` 	 Shapefiles of Localities in Bogota
 - `Data/INS_detected.xlsx` Seropositivity and Detection Rate from the National Health Institute of Colombia 
-
+- `Data/localidad_formaps.dta` Average stratum by locality
 
 
 
