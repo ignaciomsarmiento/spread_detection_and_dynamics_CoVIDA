@@ -22,7 +22,7 @@ do
   R CMD  BATCH --vanilla $i 
 done
 
-for j in 9_FigS1_raw_positivity.R 10_Table_Positivity.R 11_fig1_analytic_no_weights.R 12_fig1_analytic_exclude_public_campaign.R 13_fig1_robust_days.R 14_sample_evolution.R 15_Table_One_case_detected_of.R 16_Table_Epidemiological_week.R 17_case_mortality_rate.R 18_Population_by_Locality.R 19_Population_by_Strata.R  20_sample_by_age.R 21_sample_by_gender.R 22_G_mobility.R 23_monthly_dynamics_occupation.R 24_localidades_maps.R 25_Fig_append_INSDET.R;
+for j in 9_FigS1_raw_positivity.R 10_Table_Positivity.R 11_fig1_analytic_no_weights.R 12_fig1_analytic_exclude_public_campaign.R 13_fig1_robust_days.R 14_sample_evolution.R 15_Table_One_case_detected_of.R 16_Table_Epidemiological_week.R 17_case_mortality_rate.R 18_Population_by_Locality.R 19_Population_by_Strata.R  20_sample_by_age.R 21_sample_by_gender.R 22_G_mobility.R 23_monthly_dynamics_occupation.R 24_localidades_maps.R 25_Fig_append_INSDET.R 26_r0_calc.R;
 do
   echo "Running Supplementary Materials  $j"
   R CMD  BATCH --vanilla $j

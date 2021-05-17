@@ -61,7 +61,7 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 	- `23_monthly_dynamics_occupation.R` generates Figure "Monthly Dynamics by Occupation"
 	- `24_localidades_maps.R` generates Figure "Average Socio-economic Stratum and Dynamics by Locality" and Figure "Raw Positivity by Locality"
 	- `25_Fig_append_INSDET.R` generates "SARS-CoV-2 Seropositivity and Detection Rate across Colombia"
-
+	- `26_r0_calc.R` generates Figure "Estimate of the exponential rate of growth in new casesr"
 
 
 
