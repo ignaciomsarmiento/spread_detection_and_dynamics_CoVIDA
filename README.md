@@ -11,7 +11,7 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 
 ## Data files
 
-All necesary data except HBS sample are available. To request access to the HBS sample please contact
+All necesary data except HBS data are available. Some of the results require the HBS data on all positive detected cases from the Health Secretary of Bogota. We accessed this data through a sharing agreement and are not allowed to share the original data.
 
 - `Data/Data_CoVIDA.dta` CoVIDA Sample
 - `Data/pob_cats.dta`    Population by occupational category
