@@ -11,8 +11,9 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 
 ## Data files
 
+All necesary data except HBS sample are available. To request access to the HBS sample please contact
+
 - `Data/Data_CoVIDA.dta` CoVIDA Sample
-- `Data/sds_dta.dta`     HBS Sample
 - `Data/pob_cats.dta`    Population by occupational category
 - `Data/pob_loc.dta`	 Population by locality
 - `Data/pob_strat.dta`   Population by socioeconomic strata
@@ -92,13 +93,6 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 	- `age group`												  age group the participant belongs
 	- `gender`													  gender participant
 
-- `sds_dta.dta`:
-	- `case_id` 													case id
-	- `recuperado`  												health status
-	- `stratum` 													socioeconomic stratum
-	- `localidadasis`												locality where the individual resides
-	- `casos`                                                       =1 if it was a reported case (the db includes all reported cases)	
-	- `test_day`													day that the test was administered
 
 	
 	
