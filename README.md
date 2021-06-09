@@ -11,7 +11,7 @@ We implemented a COVID-19 sentinel epidemiological surveillance study with 59,77
 
 ## Data files
 
-All necesary data except HBS data are available. Some of the results require the HBS data on all positive detected cases from the Health Secretary of Bogota. We accessed this data through a sharing agreement and are not allowed to share the original data.
+Raw CoVIDA and HBS data are protected and are not available due to data privacy laws. Processed data sets to reproduce our results are available here:
 
 - `Data/Data_CoVIDA.dta` CoVIDA Sample
 - `Data/sds_dta.dta` HBS Sample
@@ -29,7 +29,7 @@ All necesary data except HBS data are available. Some of the results require the
 
 ## Software:
 
-- The analysis is conducted using Stata-16 version 16.1 and R version 4.0.2 (2020-06-22) software
+- The analysis was conducted using Stata-16 version 16.1 and R version 4.0.2 (2020-06-22)
 
 - All the code was run on a MacBookPro 2020 running macOS Big Sur Version 11.2.1
 
