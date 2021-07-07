@@ -104,7 +104,7 @@ ggplot(data=rs, aes(x=stratum, y=acumm_covid_covida, group=grp, col=grp))+
   geom_errorbar(aes(ymin=q025, ymax=q975,lty=grp), width=.2, position=position_dodge(width = .4)) +
   xlab("Socioeconomic Strata") +
   theme_bw() +
-  scale_y_continuous("Accumulated SARS-COV-2 Cases \n as Percentage of Population",breaks =seq(0,100,20),limits=c(0,102)) +
+  scale_y_continuous("Accumulated COVID-19 Cases \n as Percentage of Population",breaks =seq(0,100,20),limits=c(0,102)) +
   theme(legend.title= element_blank() ,
         legend.position="bottom",
         legend.text=element_text(size=12),
